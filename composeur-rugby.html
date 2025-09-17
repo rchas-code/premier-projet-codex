@@ -789,7 +789,16 @@
       return null;
     };
 
-    let state = loadState() || defaultState();
+    let state = null;
+
+    const initializeState = () => {
+      const loaded = loadState();
+      if (loaded && Array.isArray(loaded.teams) && loaded.teams.length > 0) {
+        state = loaded;
+      } else {
+        state = defaultState();
+      }
+    };
 
     const getTeamDefinition = (team) => {
       return TEAM_DEFINITIONS.find((definition) => definition.key === team.key) || TEAM_DEFINITIONS[0];
@@ -1207,40 +1216,61 @@
       saveState();
     });
 
-    const addTeamButton = document.getElementById("add-team-btn");
-    if (addTeamButton) {
-      addTeamButton.addEventListener("click", () => {
-        const definition = availableTeamDefinition();
-        if (!definition) return;
-        state.teams.push(defaultTeamState(definition));
-        render();
-        saveState();
-      });
+    const init = () => {
+      initializeState();
+      render();
+
+      const addTeamButton = document.getElementById("add-team-btn");
+      if (addTeamButton) {
+        addTeamButton.addEventListener("click", () => {
+          const definition = availableTeamDefinition();
+          if (!definition) return;
+          state.teams.push(defaultTeamState(definition));
+          render();
+          saveState();
+        });
+      }
+
+      const saveBtn = document.getElementById("save-btn");
+      if (saveBtn) {
+        saveBtn.addEventListener("click", () => {
+          saveState();
+        });
+      }
+
+      const loadBtn = document.getElementById("load-btn");
+      if (loadBtn) {
+        loadBtn.addEventListener("click", () => {
+          const loaded = loadState();
+          if (loaded && Array.isArray(loaded.teams) && loaded.teams.length > 0) {
+            state = loaded;
+            render();
+          }
+        });
+      }
+
+      const resetBtn = document.getElementById("reset-btn");
+      if (resetBtn) {
+        resetBtn.addEventListener("click", () => {
+          if (confirm("Réinitialiser le composeur ?")) {
+            resetState();
+          }
+        });
+      }
+
+      const printBtn = document.getElementById("print-btn");
+      if (printBtn) {
+        printBtn.addEventListener("click", () => {
+          window.print();
+        });
+      }
+    };
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+    } else {
+      init();
     }
-
-    document.getElementById("save-btn").addEventListener("click", () => {
-      saveState();
-    });
-
-    document.getElementById("load-btn").addEventListener("click", () => {
-      const loaded = loadState();
-      if (loaded) {
-        state = loaded;
-        render();
-      }
-    });
-
-    document.getElementById("reset-btn").addEventListener("click", () => {
-      if (confirm("Réinitialiser le composeur ?")) {
-        resetState();
-      }
-    });
-
-    document.getElementById("print-btn").addEventListener("click", () => {
-      window.print();
-    });
-
-    render();
   </script>
 
 </body>
