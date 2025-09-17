@@ -26,7 +26,10 @@
       color: #1f2633;
     }
 
-    h1, h2, h3, h4 {
+    h1,
+    h2,
+    h3,
+    h4 {
       margin: 0;
       font-weight: 600;
     }
@@ -93,18 +96,25 @@
       align-items: start;
     }
 
-    .sidebar {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
+    .card {
       background: var(--card);
       border-radius: 20px;
       padding: 20px;
       box-shadow: 0 12px 30px rgba(15, 35, 95, 0.08);
       border: 1px solid rgba(12, 41, 92, 0.06);
+    }
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
       align-self: stretch;
       min-height: 100%;
       border-right: 1px solid var(--border);
+      position: sticky;
+      top: 24px;
+      max-height: calc(100vh - 48px);
+      overflow-y: auto;
     }
 
     .sidebar h2 {
@@ -124,14 +134,8 @@
 
     .sidebar .pool-list {
       flex: 1;
-    }
-
-    .card {
-      background: var(--card);
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 12px 30px rgba(15, 35, 95, 0.08);
-      border: 1px solid rgba(12, 41, 92, 0.06);
+      min-height: 160px;
+      overflow-y: auto;
     }
 
     textarea {
@@ -151,66 +155,21 @@
     }
 
     .pool-list,
-    .list {
+    .slot-content {
       display: flex;
       flex-direction: column;
       gap: 8px;
-      min-height: 120px;
+    }
+
+    .pool-list,
+    .slot {
       padding: 12px;
       border-radius: 16px;
       border: 1px dashed var(--border);
       background: #f9fbff;
     }
 
-    .sidebar {
-      position: sticky;
-      top: 24px;
-      max-height: calc(100vh - 48px);
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .sidebar > div:first-child {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .sidebar .subtitle {
-      margin: 0;
-    }
-
-    .sidebar #import-btn {
-      border: 1px solid transparent;
-      padding: 10px 16px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-alt));
-      color: #fff;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      align-self: flex-start;
-    }
-
-    .sidebar #import-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 18px rgba(15, 52, 143, 0.2);
-    }
-
-    .sidebar .pool {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .sidebar .pool-list {
-      flex: 1;
-      overflow-y: auto;
-    }
-
-    .pool-list.empty::after,
-    .list.empty::after {
+    .pool-list.empty::after {
       content: attr(data-empty-label);
       color: var(--text-muted);
       font-style: italic;
@@ -233,6 +192,12 @@
     .player .name {
       flex: 1;
       font-weight: 500;
+      font-size: 0.95rem;
+    }
+
+    .player-actions {
+      display: flex;
+      gap: 6px;
     }
 
     .player button {
@@ -249,100 +214,160 @@
       color: var(--accent);
     }
 
-    .team-card {
+    .field-card {
+      position: relative;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
       gap: 16px;
-    }
-
-    .team-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      justify-content: space-between;
-    }
-
-    .team-header input {
-      font: inherit;
-      font-weight: 600;
-      border: none;
-      background: transparent;
-      padding: 6px 0;
-      border-bottom: 2px solid transparent;
-    }
-
-    .team-header input:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2px 10px;
-      border-radius: 999px;
-      background: rgba(15, 52, 143, 0.12);
-      color: var(--accent);
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-
-    .list-title {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-
-    .tv-wrapper {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 16px;
-    }
-
-    .tv-card {
-      border-radius: 24px;
-      padding: 24px;
+      background: linear-gradient(180deg, #0c8f4a 0%, #0a6f3b 100%);
       color: #fff;
-      background: linear-gradient(140deg, #0b3d91, #144fc1 40%, #21a8f5 95%);
-      box-shadow: 0 18px 40px rgba(11, 61, 145, 0.4);
+      min-height: 680px;
     }
 
-    .tv-card h3 {
-      font-size: 1.4rem;
-      margin-bottom: 16px;
+    .field-card::before {
+      content: "";
+      position: absolute;
+      inset: 16px;
+      border-radius: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.25);
+      pointer-events: none;
     }
 
-    .tv-team {
-      margin-bottom: 16px;
-      padding: 12px;
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.12);
+    .field-card::after {
+      content: "";
+      position: absolute;
+      inset: 16px;
+      border-radius: 18px;
+      background-image: repeating-linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0.14),
+          rgba(255, 255, 255, 0.14) 1px,
+          transparent 1px,
+          transparent calc(100% / 6)
+        ),
+        repeating-linear-gradient(
+          to right,
+          rgba(255, 255, 255, 0.12),
+          rgba(255, 255, 255, 0.12) 1px,
+          transparent 1px,
+          transparent calc(100% / 7)
+        );
+      opacity: 0.45;
+      pointer-events: none;
     }
 
-    .tv-team:last-child {
-      margin-bottom: 0;
+    .field-header {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px 16px;
     }
 
-    .tv-team h4 {
-      font-size: 1.1rem;
-      margin-bottom: 8px;
+    .field-header h2 {
+      font-size: 1.6rem;
+      color: #fff;
     }
 
-    .tv-lineup {
+    .field-header .subtitle {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.82);
+      max-width: 420px;
+    }
+
+    .lineup-grid {
+      position: relative;
+      z-index: 1;
+      flex: 1;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      grid-template-columns: repeat(7, minmax(70px, 1fr));
+      grid-template-rows: repeat(6, minmax(95px, auto));
+      gap: 12px;
+      padding: 8px 0 12px;
+    }
+
+    .position-card {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 14px;
+      padding: 12px;
+      box-shadow: 0 8px 18px rgba(8, 38, 70, 0.25);
+      color: #1f2633;
+      width: min(210px, 100%);
+      justify-self: center;
+    }
+
+    .position-number {
+      display: inline-flex;
+      align-self: flex-start;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(11, 61, 145, 0.12);
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .position-label {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .slots {
+      display: flex;
+      flex-direction: column;
       gap: 8px;
     }
 
-    .pill {
-      display: inline-flex;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(4px);
-      font-size: 0.85rem;
+    .slot {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-height: 78px;
+      border-radius: 12px;
+      border: 1px dashed rgba(11, 61, 145, 0.25);
+      background: rgba(11, 61, 145, 0.05);
+      padding: 10px;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .slot-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: rgba(11, 61, 145, 0.85);
+    }
+
+    .slot-placeholder {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      padding: 6px 4px;
+    }
+
+    .slot.empty {
+      justify-content: center;
+    }
+
+    .slot.empty .slot-label {
+      color: rgba(31, 38, 51, 0.6);
+    }
+
+    .slot.empty .slot-content {
+      display: none;
+    }
+
+    .slot.drag-over {
+      border-style: solid;
+      border-color: var(--accent);
+      background: rgba(11, 61, 145, 0.18);
     }
 
     .editor-only {
@@ -357,7 +382,7 @@
       display: flex;
     }
 
-    @media (max-width: 720px) {
+    @media (max-width: 900px) {
       .layout {
         grid-template-columns: 1fr;
       }
@@ -368,20 +393,12 @@
         overflow: visible;
       }
 
-      .sidebar .pool {
-        flex: initial;
-      }
-
-      .sidebar .pool-list {
-        max-height: none;
-      }
-
-      .sidebar #import-btn {
-        width: 100%;
+      .field-card {
+        min-height: 640px;
       }
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 720px) {
       header {
         flex-direction: column;
         align-items: flex-start;
@@ -396,16 +413,22 @@
         flex: 1 1 auto;
       }
 
-      .sidebar #import-btn {
-        margin-top: 8px;
+      .lineup-grid {
+        grid-template-columns: repeat(7, minmax(48px, 1fr));
+        gap: 8px;
+      }
+
+      .position-card {
+        width: 100%;
+        padding: 10px;
+      }
+
+      .position-label {
+        font-size: 0.85rem;
       }
     }
 
-    @media (max-width: 480px) {
-      .tv-lineup {
-        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-      }
-
+    @media (max-width: 600px) {
       .player {
         flex-direction: column;
         align-items: flex-start;
@@ -416,28 +439,44 @@
       }
     }
 
-    @media print {
-      body {
-        background: #000;
+    @media (max-width: 480px) {
+      .field-card {
+        padding: 16px;
       }
 
-      header,
-      .layout,
-      .editor-only {
+      .position-number {
+        font-size: 0.85rem;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      header .actions,
+      .sidebar {
         display: none !important;
       }
 
-      .tv-wrapper {
-        display: grid;
-        gap: 24px;
+      .layout {
         grid-template-columns: 1fr;
-        page-break-inside: avoid;
       }
 
-      .tv-card {
-        -webkit-print-color-adjust: exact;
-        color-adjust: exact;
-        page-break-inside: avoid;
+      .field-card {
+        box-shadow: none;
+        background: #fff;
+        color: #000;
+      }
+
+      .field-card::before,
+      .field-card::after {
+        display: none;
+      }
+
+      .position-card {
+        box-shadow: none;
+        border: 1px solid #ccc;
       }
     }
   </style>
@@ -458,34 +497,26 @@
       <section class="card sidebar">
         <div>
           <h2>Joueurs présents</h2>
-          <p class="subtitle">Commencez par entrer tous vos joueurs ici. Puis créez votre composition.</p>
+          <p class="subtitle">Commencez par entrer tous vos joueurs ici. Puis glissez-les dans la composition.</p>
         </div>
         <textarea id="import-input" placeholder="Ex. Antoine Dupont; Romain Ntamack, Grégory Alldritt"></textarea>
         <button id="import-btn">Ajouter les joueurs</button>
         <div class="pool">
           <h3>Effectif du jour</h3>
-          <div id="pool-list" class="pool-list" data-drop-target="pool" data-empty-label="Aucun joueur">
+          <div id="pool-list" class="pool-list" data-drop-target="pool" data-empty-label="Aucun joueur"></div>
+        </div>
+      </section>
+
+      <section class="card field-card">
+        <div class="field-header">
+          <div>
+            <h2>Composition du XV</h2>
+            <p class="subtitle">Placez un titulaire et un remplaçant à chaque poste tout en conservant la numérotation historique du rugby.</p>
           </div>
         </div>
-      </aside>
-
-      <section class="card">
-        <div class="team-header" style="margin-bottom: 12px;">
-          <h2>Équipes</h2>
-          <button id="add-team-btn" class="secondary" style="padding: 6px 12px; border-radius: 10px; border: 1px solid var(--border);">+ Ajouter une équipe</button>
-        </div>
-        <div id="teams-wrapper" class="teams"></div>
+        <div id="lineup-grid" class="lineup-grid"></div>
       </section>
     </div>
-
-    <section class="tv-wrapper">
-      <article class="tv-card" id="tv-starters">
-        <h3>Vue TV — Titulaires</h3>
-      </article>
-      <article class="tv-card" id="tv-bench">
-        <h3>Vue TV — Remplaçants</h3>
-      </article>
-    </section>
   </div>
 
   <script>
@@ -496,42 +527,49 @@
       return () => `p_${Date.now().toString(36)}_${(inc++).toString(36)}`;
     })();
 
+    const POSITIONS = [
+      { number: 11, label: "Ailier gauche", row: 1, col: 1 },
+      { number: 15, label: "Arrière", row: 1, col: 4 },
+      { number: 14, label: "Ailier droit", row: 1, col: 7 },
+      { number: 12, label: "Centre intérieur", row: 2, col: 3 },
+      { number: 13, label: "Centre extérieur", row: 2, col: 5 },
+      { number: 10, label: "Demi d'ouverture", row: 3, col: 3 },
+      { number: 9, label: "Demi de mêlée", row: 3, col: 5 },
+      { number: 6, label: "Troisième ligne aile", row: 4, col: 2 },
+      { number: 8, label: "Troisième ligne centre", row: 4, col: 4 },
+      { number: 7, label: "Troisième ligne aile", row: 4, col: 6 },
+      { number: 4, label: "Deuxième ligne", row: 5, col: 3 },
+      { number: 5, label: "Deuxième ligne", row: 5, col: 5 },
+      { number: 1, label: "Pilier gauche", row: 6, col: 2 },
+      { number: 2, label: "Talonneur", row: 6, col: 4 },
+      { number: 3, label: "Pilier droit", row: 6, col: 6 }
+    ];
+
+    const createEmptyLineup = () => {
+      const lineup = {};
+      POSITIONS.forEach(({ number }) => {
+        lineup[number] = { starter: null, bench: null };
+      });
+      return lineup;
+    };
+
+    const normalizePlayer = (player) => {
+      if (!player || typeof player !== "object") return null;
+      if (typeof player.id !== "string" || typeof player.name !== "string") return null;
+      return { id: player.id, name: player.name };
+    };
+
     const defaultState = () => ({
       pool: [],
-      teams: [
-        {
-          id: uid(),
-          name: "Équipe 1",
-          starters: [],
-          bench: []
-        }
-      ],
+      lineup: createEmptyLineup(),
       playersText: ""
     });
-
-    const escapeHTML = (value) => {
-      return String(value).replace(/[&<>"']/g, (char) => {
-        switch (char) {
-          case "&":
-            return "&amp;";
-          case "<":
-            return "&lt;";
-          case ">":
-            return "&gt;";
-          case '"':
-            return "&quot;";
-          case "'":
-            return "&#39;";
-          default:
-            return char;
-        }
-      });
-    };
 
     const parseNames = (raw) => {
       if (!raw) return [];
       return raw
-        .split(/[\n;,]+/)
+        .split(/[
+;,]+/)
         .map((name) => name.trim())
         .filter((name) => name.length > 0);
     };
@@ -550,16 +588,51 @@
         if (!raw) return null;
         const parsed = JSON.parse(raw);
         if (!parsed || typeof parsed !== "object") return null;
+
+        const lineup = createEmptyLineup();
+        const poolMap = new Map();
+
+        const addToPool = (player) => {
+          const normalized = normalizePlayer(player);
+          if (!normalized) return;
+          poolMap.set(normalized.id, normalized);
+        };
+
+        if (Array.isArray(parsed.pool)) {
+          parsed.pool.forEach(addToPool);
+        }
+
+        if (parsed.lineup && typeof parsed.lineup === "object") {
+          POSITIONS.forEach(({ number }) => {
+            const slot = parsed.lineup[number];
+            if (!slot || typeof slot !== "object") return;
+            const starter = normalizePlayer(slot.starter);
+            const bench = normalizePlayer(slot.bench);
+            if (starter) {
+              lineup[number].starter = starter;
+              poolMap.delete(starter.id);
+            }
+            if (bench) {
+              lineup[number].bench = bench;
+              poolMap.delete(bench.id);
+            }
+          });
+        }
+
+        if (Array.isArray(parsed.teams)) {
+          parsed.teams.forEach((team) => {
+            if (!team || typeof team !== "object") return;
+            (team.starters || []).forEach(addToPool);
+            (team.bench || []).forEach(addToPool);
+          });
+        }
+
+        const pool = Array.from(poolMap.values());
+        pool.sort((a, b) => a.name.localeCompare(b.name, "fr"));
+
         return {
-          pool: Array.isArray(parsed.pool) ? parsed.pool : [],
-          teams: Array.isArray(parsed.teams)
-            ? parsed.teams.map((team) => ({
-                id: team.id || uid(),
-                name: team.name || "Équipe",
-                starters: Array.isArray(team.starters) ? team.starters : [],
-                bench: Array.isArray(team.bench) ? team.bench : []
-              }))
-            : defaultState().teams,
+          pool,
+          lineup,
           playersText: typeof parsed.playersText === "string" ? parsed.playersText : ""
         };
       } catch (err) {
@@ -573,15 +646,14 @@
       if (poolIndex !== -1) {
         return { type: "pool", index: poolIndex };
       }
-      for (let t = 0; t < state.teams.length; t++) {
-        const team = state.teams[t];
-        const starterIndex = team.starters.findIndex((p) => p.id === playerId);
-        if (starterIndex !== -1) {
-          return { type: "starter", teamIndex: t, index: starterIndex };
+      for (const { number } of POSITIONS) {
+        const slot = state.lineup[number];
+        if (!slot) continue;
+        if (slot.starter && slot.starter.id === playerId) {
+          return { type: "starter", position: number };
         }
-        const benchIndex = team.bench.findIndex((p) => p.id === playerId);
-        if (benchIndex !== -1) {
-          return { type: "bench", teamIndex: t, index: benchIndex };
+        if (slot.bench && slot.bench.id === playerId) {
+          return { type: "bench", position: number };
         }
       }
       return null;
@@ -592,11 +664,17 @@
       if (location.type === "pool") {
         return state.pool.splice(location.index, 1)[0] || null;
       }
+      const slot = state.lineup[location.position];
+      if (!slot) return null;
       if (location.type === "starter") {
-        return state.teams[location.teamIndex].starters.splice(location.index, 1)[0] || null;
+        const player = slot.starter;
+        slot.starter = null;
+        return player;
       }
       if (location.type === "bench") {
-        return state.teams[location.teamIndex].bench.splice(location.index, 1)[0] || null;
+        const player = slot.bench;
+        slot.bench = null;
+        return player;
       }
       return null;
     };
@@ -605,50 +683,43 @@
       const location = findLocation(playerId);
       const player = removeFromLocation(location);
       if (!player) return;
-      const exists = state.pool.some((p) => p.id === player.id);
-      if (!exists) {
+      if (!state.pool.some((p) => p.id === player.id)) {
         state.pool.push(player);
         state.pool.sort((a, b) => a.name.localeCompare(b.name, "fr"));
       }
     };
 
-    const placeStarter = (playerId, teamId) => {
-      const team = state.teams.find((t) => t.id === teamId);
-      if (!team) return;
+    const placePlayer = (playerId, positionNumber, role) => {
+      const slot = state.lineup[positionNumber];
+      if (!slot || (role !== "starter" && role !== "bench")) return;
       const location = findLocation(playerId);
       const player = removeFromLocation(location);
       if (!player) return;
-      const already = team.starters.some((p) => p.id === player.id);
-      if (!already) {
-        team.starters.push(player);
+      const previous = slot[role];
+      if (previous && previous.id !== player.id) {
+        if (!state.pool.some((p) => p.id === previous.id)) {
+          state.pool.push(previous);
+        }
       }
-    };
-
-    const placeBench = (playerId, teamId) => {
-      const team = state.teams.find((t) => t.id === teamId);
-      if (!team) return;
-      const location = findLocation(playerId);
-      const player = removeFromLocation(location);
-      if (!player) return;
-      const already = team.bench.some((p) => p.id === player.id);
-      if (!already) {
-        team.bench.push(player);
-      }
+      slot[role] = player;
+      state.pool = state.pool.filter((p) => p.id !== player.id);
+      state.pool.sort((a, b) => a.name.localeCompare(b.name, "fr"));
     };
 
     const importPlayers = () => {
       const names = parseNames(state.playersText);
       if (!names.length) return;
-      const canonical = new Set();
-      state.pool.forEach((player) => canonical.add(player.name.toLowerCase()));
-      state.teams.forEach((team) => {
-        team.starters.forEach((player) => canonical.add(player.name.toLowerCase()));
-        team.bench.forEach((player) => canonical.add(player.name.toLowerCase()));
+      const existing = new Set();
+      state.pool.forEach((player) => existing.add(player.name.toLowerCase()));
+      POSITIONS.forEach(({ number }) => {
+        const slot = state.lineup[number];
+        if (slot.starter) existing.add(slot.starter.name.toLowerCase());
+        if (slot.bench) existing.add(slot.bench.name.toLowerCase());
       });
       names.forEach((name) => {
         const key = name.toLowerCase();
-        if (canonical.has(key)) return;
-        canonical.add(key);
+        if (existing.has(key)) return;
+        existing.add(key);
         state.pool.push({ id: uid(), name });
       });
       state.pool.sort((a, b) => a.name.localeCompare(b.name, "fr"));
@@ -660,30 +731,6 @@
     const deletePlayer = (playerId) => {
       const location = findLocation(playerId);
       removeFromLocation(location);
-      render();
-      saveState();
-    };
-
-    const addTeam = () => {
-      const nextIndex = state.teams.length + 1;
-      state.teams.push({ id: uid(), name: `Équipe ${nextIndex}`, starters: [], bench: [] });
-      render();
-      saveState();
-    };
-
-    const removeTeam = (teamId) => {
-      if (state.teams.length <= 1) return;
-      const index = state.teams.findIndex((team) => team.id === teamId);
-      if (index === -1) return;
-      const team = state.teams[index];
-      [...team.starters, ...team.bench].forEach((player) => {
-        const exists = state.pool.some((p) => p.id === player.id);
-        if (!exists) {
-          state.pool.push(player);
-        }
-      });
-      state.pool.sort((a, b) => a.name.localeCompare(b.name, "fr"));
-      state.teams.splice(index, 1);
       render();
       saveState();
     };
@@ -701,7 +748,22 @@
       item.className = "player";
       item.draggable = true;
       item.dataset.playerId = player.id;
-      const safeName = escapeHTML(player.name);
+      const safeName = player.name.replace(/[&<>"']/g, (char) => {
+        switch (char) {
+          case "&":
+            return "&amp;";
+          case "<":
+            return "&lt;";
+          case ">":
+            return "&gt;";
+          case '"':
+            return "&quot;";
+          case "'":
+            return "&#39;";
+          default:
+            return char;
+        }
+      });
       item.innerHTML = `
         <span class="name">${safeName}</span>
         <div class="player-actions">
@@ -710,46 +772,6 @@
         </div>
       `;
       return item;
-    };
-
-    const renderTeams = () => {
-      const wrapper = document.getElementById("teams-wrapper");
-      wrapper.innerHTML = "";
-      state.teams.forEach((team) => {
-        const card = document.createElement("article");
-        card.className = "team-card card";
-        const safeName = escapeHTML(team.name);
-        card.innerHTML = `
-          <div class="team-header">
-            <input type="text" value="${safeName}" data-team-id="${team.id}" class="team-name" />
-            <span class="badge">Tit. ${team.starters.length} · Remp. ${team.bench.length}</span>
-            <button type="button" class="secondary" data-action="delete-team" data-team-id="${team.id}" title="Supprimer l'équipe" style="border-radius: 10px; border: 1px solid var(--border); padding: 6px 10px;">✕</button>
-          </div>
-          <div class="list-block">
-            <div class="list-title">
-              <h3>Titulaires</h3>
-              <span class="badge">${team.starters.length}</span>
-            </div>
-            <div class="list ${team.starters.length === 0 ? "empty" : ""}" data-empty-label="Glisser ici" data-drop-target="starter" data-team-id="${team.id}"></div>
-          </div>
-          <div class="list-block">
-            <div class="list-title">
-              <h3>Remplaçants</h3>
-              <span class="badge">${team.bench.length}</span>
-            </div>
-            <div class="list ${team.bench.length === 0 ? "empty" : ""}" data-empty-label="Glisser ici" data-drop-target="bench" data-team-id="${team.id}"></div>
-          </div>
-        `;
-        wrapper.appendChild(card);
-        const startersContainer = card.querySelector('[data-drop-target="starter"]');
-        team.starters.forEach((player) => {
-          startersContainer.appendChild(buildPlayerElement(player, "starter"));
-        });
-        const benchContainer = card.querySelector('[data-drop-target="bench"]');
-        team.bench.forEach((player) => {
-          benchContainer.appendChild(buildPlayerElement(player, "bench"));
-        });
-      });
     };
 
     const renderPool = () => {
@@ -766,58 +788,64 @@
       });
     };
 
-    const renderTV = () => {
-      const startersView = document.getElementById("tv-starters");
-      const benchView = document.getElementById("tv-bench");
-      const startersContent = document.createElement("div");
-      const benchContent = document.createElement("div");
-      startersContent.className = "tv-content";
-      benchContent.className = "tv-content";
-      state.teams.forEach((team) => {
-        const startersBlock = document.createElement("div");
-        startersBlock.className = "tv-team";
-        startersBlock.innerHTML = `<h4>${escapeHTML(team.name)}</h4>`;
-        const startersList = document.createElement("div");
-        startersList.className = "tv-lineup";
-        team.starters.forEach((player, index) => {
-          const pill = document.createElement("span");
-          pill.className = "pill";
-          pill.textContent = `${String(index + 1).padStart(2, "0")} — ${player.name}`;
-          startersList.appendChild(pill);
-        });
-        if (!team.starters.length) {
-          const empty = document.createElement("span");
-          empty.className = "pill";
-          empty.textContent = "Aucun titulaire";
-          startersList.appendChild(empty);
-        }
-        startersBlock.appendChild(startersList);
-        startersContent.appendChild(startersBlock);
+    const renderLineup = () => {
+      const grid = document.getElementById("lineup-grid");
+      grid.innerHTML = "";
+      POSITIONS.forEach((position) => {
+        const card = document.createElement("div");
+        card.className = "position-card";
+        card.style.gridColumnStart = position.col;
+        card.style.gridRowStart = position.row;
 
-        const benchBlock = document.createElement("div");
-        benchBlock.className = "tv-team";
-        benchBlock.innerHTML = `<h4>${escapeHTML(team.name)}</h4>`;
-        const benchList = document.createElement("div");
-        benchList.className = "tv-lineup";
-        team.bench.forEach((player, index) => {
-          const pill = document.createElement("span");
-          pill.className = "pill";
-          pill.textContent = `${String(index + 1).padStart(2, "0")} — ${player.name}`;
-          benchList.appendChild(pill);
+        const number = document.createElement("div");
+        number.className = "position-number";
+        number.textContent = String(position.number);
+        card.appendChild(number);
+
+        const label = document.createElement("div");
+        label.className = "position-label";
+        label.textContent = position.label;
+        card.appendChild(label);
+
+        const slots = document.createElement("div");
+        slots.className = "slots";
+        card.appendChild(slots);
+
+        ["starter", "bench"].forEach((role) => {
+          const slot = document.createElement("div");
+          slot.className = "slot";
+          slot.dataset.dropTarget = "slot";
+          slot.dataset.position = String(position.number);
+          slot.dataset.role = role;
+
+          const slotLabel = document.createElement("span");
+          slotLabel.className = "slot-label";
+          slotLabel.textContent = role === "starter" ? "Titulaire" : "Remplaçant";
+          slot.appendChild(slotLabel);
+
+          const placeholder = document.createElement("span");
+          placeholder.className = "slot-placeholder";
+          placeholder.textContent = role === "starter" ? "Glissez le titulaire ici" : "Glissez le remplaçant ici";
+
+          const content = document.createElement("div");
+          content.className = "slot-content";
+
+          const player = state.lineup[position.number][role];
+          if (player) {
+            slot.classList.remove("empty");
+            const element = buildPlayerElement(player, "slot");
+            content.appendChild(element);
+          } else {
+            slot.classList.add("empty");
+            slot.appendChild(placeholder);
+          }
+
+          slot.appendChild(content);
+          slots.appendChild(slot);
         });
-        if (!team.bench.length) {
-          const empty = document.createElement("span");
-          empty.className = "pill";
-          empty.textContent = "Aucun remplaçant";
-          benchList.appendChild(empty);
-        }
-        benchBlock.appendChild(benchList);
-        benchContent.appendChild(benchBlock);
+
+        grid.appendChild(card);
       });
-      startersView.querySelectorAll(".tv-content").forEach((el) => el.remove());
-      startersView.appendChild(startersContent);
-      benchView.querySelectorAll(".tv-content").forEach((el) => el.remove());
-      benchView.appendChild(benchContent);
     };
 
     const attachDnDHandlers = () => {
@@ -834,17 +862,31 @@
           event.preventDefault();
           event.dataTransfer.dropEffect = "move";
         });
+        zone.addEventListener("dragenter", (event) => {
+          event.preventDefault();
+          if (zone.classList.contains("slot")) {
+            zone.classList.add("drag-over");
+          }
+        });
+        zone.addEventListener("dragleave", (event) => {
+          if (!zone.contains(event.relatedTarget) && zone.classList.contains("slot")) {
+            zone.classList.remove("drag-over");
+          }
+        });
         zone.addEventListener("drop", (event) => {
           event.preventDefault();
           const playerId = event.dataTransfer.getData("text/plain");
           const target = zone.dataset.dropTarget;
+          if (zone.classList.contains("slot")) {
+            zone.classList.remove("drag-over");
+          }
           if (!playerId || !target) return;
           if (target === "pool") {
             moveToPool(playerId);
-          } else if (target === "starter") {
-            placeStarter(playerId, zone.dataset.teamId);
-          } else if (target === "bench") {
-            placeBench(playerId, zone.dataset.teamId);
+          } else if (target === "slot") {
+            const position = Number(zone.dataset.position);
+            const role = zone.dataset.role;
+            placePlayer(playerId, position, role);
           }
           render();
           saveState();
@@ -858,8 +900,7 @@
         textarea.value = state.playersText;
       }
       renderPool();
-      renderTeams();
-      renderTV();
+      renderLineup();
       attachDnDHandlers();
     };
 
@@ -867,22 +908,16 @@
       if (event.target.id === "import-input") {
         state.playersText = event.target.value;
       }
-      if (event.target.classList.contains("team-name")) {
-        const teamId = event.target.dataset.teamId;
-        const team = state.teams.find((t) => t.id === teamId);
-        if (team) {
-          team.name = event.target.value.trim() || "Équipe";
-          renderTV();
-          saveState();
-        }
-      }
     });
 
     document.addEventListener("click", (event) => {
       const action = event.target.dataset.action;
       if (!action) return;
+      const playerElement = event.target.closest(".player");
+      if (!playerElement) return;
+      const playerId = playerElement.dataset.playerId;
+      if (!playerId) return;
       if (action === "delete-player") {
-        const playerId = event.target.closest(".player").dataset.playerId;
         if (event.target.dataset.context === "pool") {
           deletePlayer(playerId);
         } else {
@@ -892,23 +927,14 @@
         }
       }
       if (action === "send-to-pool") {
-        const playerId = event.target.closest(".player").dataset.playerId;
         moveToPool(playerId);
         render();
         saveState();
-      }
-      if (action === "delete-team") {
-        const teamId = event.target.dataset.teamId;
-        removeTeam(teamId);
       }
     });
 
     document.getElementById("import-btn").addEventListener("click", () => {
       importPlayers();
-    });
-
-    document.getElementById("add-team-btn").addEventListener("click", () => {
-      addTeam();
     });
 
     document.getElementById("save-btn").addEventListener("click", () => {
