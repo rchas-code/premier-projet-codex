@@ -1099,7 +1099,7 @@
         if (slot.starter) {
           starterContainer.appendChild(buildPlayerElement(slot.starter, "position", "starter"));
         } else {
-          starterContainer.innerHTML = '<span class="placeholder">Glisser ici</span>';
+          starterContainer.innerHTML = '<span class="placeholder"></span>';
         }
 
         const substituteSlot = document.createElement("div");
@@ -1116,7 +1116,7 @@
         if (slot.substitute) {
           substituteContainer.appendChild(buildPlayerElement(slot.substitute, "position", "substitute"));
         } else {
-          substituteContainer.innerHTML = '<span class="placeholder">Glisser ici</span>';
+          substituteContainer.innerHTML = '<span class="placeholder"></span>';
         }
 
         container.appendChild(starterSlot);
