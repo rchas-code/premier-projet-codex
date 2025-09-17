@@ -84,7 +84,7 @@
 
     .layout {
       display: grid;
-      grid-template-columns: minmax(320px, 33%) 1fr;
+      grid-template-columns: clamp(300px, 24vw, 400px) 1fr;
       gap: 24px;
       align-items: start;
     }
@@ -312,7 +312,15 @@
       display: contents;
     }
 
-    @media (max-width: 900px) {
+    .layout.editor-only {
+      display: grid;
+    }
+
+    .actions.editor-only {
+      display: flex;
+    }
+
+    @media (max-width: 720px) {
       .layout {
         grid-template-columns: 1fr;
       }
