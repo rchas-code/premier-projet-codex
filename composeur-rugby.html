@@ -158,13 +158,22 @@
     .pool-list,
     .list {
       display: flex;
-      flex-direction: column;
       gap: 8px;
       min-height: 120px;
       padding: 12px;
       border-radius: 16px;
       border: 1px dashed var(--border);
       background: #f9fbff;
+    }
+
+    .pool-list {
+      flex-wrap: wrap;
+      align-items: flex-start;
+      align-content: flex-start;
+    }
+
+    .list {
+      flex-direction: column;
     }
 
     .pool-list.empty::after,
@@ -187,6 +196,12 @@
       border: 1px solid rgba(15, 52, 143, 0.12);
       box-shadow: 0 4px 12px rgba(15, 52, 143, 0.08);
       gap: 10px;
+    }
+
+    .pool-list .player {
+      flex: 0 0 auto;
+      width: fit-content;
+      max-width: 100%;
     }
 
     .player .name {
