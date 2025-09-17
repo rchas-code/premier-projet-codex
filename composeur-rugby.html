@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Composeur Rugby</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: "Segoe UI", Roboto, sans-serif;
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --border: #d6d9e3;
+      --accent: #0b3d91;
+      --accent-alt: #00a8e8;
+      --text-muted: #5b6270;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: #1f2633;
+    }
+
+    h1, h2, h3, h4 {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .page {
+      min-height: 100vh;
+      padding: 24px clamp(12px, 4vw, 48px);
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+      justify-content: space-between;
+    }
+
+    header h1 {
+      font-size: clamp(1.75rem, 2vw, 2.25rem);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .actions button {
+      border: 1px solid transparent;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-alt));
+      color: #fff;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .actions button.secondary {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--accent);
+    }
+
+    .actions button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(15, 52, 143, 0.2);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 12px 30px rgba(15, 35, 95, 0.08);
+      border: 1px solid rgba(12, 41, 92, 0.06);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 140px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 16px;
+      resize: vertical;
+      font: inherit;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+    }
+
+    .pool-list,
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 120px;
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px dashed var(--border);
+      background: #f9fbff;
+    }
+
+    .pool-list.empty::after,
+    .list.empty::after {
+      content: attr(data-empty-label);
+      color: var(--text-muted);
+      font-style: italic;
+      text-align: center;
+      padding: 24px 0;
+    }
+
+    .player {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: #fff;
+      border: 1px solid rgba(15, 52, 143, 0.12);
+      box-shadow: 0 4px 12px rgba(15, 52, 143, 0.08);
+      gap: 12px;
+    }
+
+    .player .name {
+      flex: 1;
+      font-weight: 500;
+    }
+
+    .player button {
+      border: none;
+      background: none;
+      color: var(--text-muted);
+      font-size: 1rem;
+      padding: 4px 6px;
+      border-radius: 50%;
+    }
+
+    .player button:hover {
+      background: rgba(15, 52, 143, 0.08);
+      color: var(--accent);
+    }
+
+    .team-card {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .team-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      justify-content: space-between;
+    }
+
+    .team-header input {
+      font: inherit;
+      font-weight: 600;
+      border: none;
+      background: transparent;
+      padding: 6px 0;
+      border-bottom: 2px solid transparent;
+    }
+
+    .team-header input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px 10px;
+      border-radius: 999px;
+      background: rgba(15, 52, 143, 0.12);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .list-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .tv-wrapper {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .tv-card {
+      border-radius: 24px;
+      padding: 24px;
+      color: #fff;
+      background: linear-gradient(140deg, #0b3d91, #144fc1 40%, #21a8f5 95%);
+      box-shadow: 0 18px 40px rgba(11, 61, 145, 0.4);
+    }
+
+    .tv-card h3 {
+      font-size: 1.4rem;
+      margin-bottom: 16px;
+    }
+
+    .tv-team {
+      margin-bottom: 16px;
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .tv-team:last-child {
+      margin-bottom: 0;
+    }
+
+    .tv-team h4 {
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+
+    .tv-lineup {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 8px;
+    }
+
+    .pill {
+      display: inline-flex;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(4px);
+      font-size: 0.85rem;
+    }
+
+    .editor-only {
+      display: contents;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .actions button {
+        flex: 1 1 auto;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .tv-lineup {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      }
+
+      .player {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .player button {
+        align-self: flex-end;
+      }
+    }
+
+    @media print {
+      body {
+        background: #000;
+      }
+
+      header,
+      .layout,
+      .editor-only {
+        display: none !important;
+      }
+
+      .tv-wrapper {
+        display: grid;
+        gap: 24px;
+        grid-template-columns: 1fr;
+        page-break-inside: avoid;
+      }
+
+      .tv-card {
+        -webkit-print-color-adjust: exact;
+        color-adjust: exact;
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1>Composeur de XV de Rugby</h1>
+      <div class="actions editor-only">
+        <button id="import-btn">Ajouter</button>
+        <button id="save-btn">Sauvegarder</button>
+        <button id="load-btn" class="secondary">Charger</button>
+        <button id="print-btn" class="secondary">Imprimer</button>
+        <button id="reset-btn" class="secondary">Réinitialiser</button>
+      </div>
+    </header>
+
+    <div class="layout editor-only">
+      <section class="card">
+        <h2>Effectif &amp; Pool</h2>
+        <p class="subtitle">Collez votre effectif (un joueur par ligne, virgule ou point-virgule) puis répartissez-les via glisser-déposer.</p>
+        <textarea id="import-input" placeholder="Ex. Antoine Dupont; Romain Ntamack, Grégory Alldritt"></textarea>
+        <div class="pool">
+          <h3>Pool disponible</h3>
+          <div id="pool-list" class="pool-list" data-drop-target="pool" data-empty-label="Aucun joueur">
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="team-header" style="margin-bottom: 12px;">
+          <h2>Équipes</h2>
+          <button id="add-team-btn" class="secondary" style="padding: 6px 12px; border-radius: 10px; border: 1px solid var(--border);">+ Ajouter une équipe</button>
+        </div>
+        <div id="teams-wrapper" class="teams"></div>
+      </section>
+    </div>
+
+    <section class="tv-wrapper">
+      <article class="tv-card" id="tv-starters">
+        <h3>Vue TV — Titulaires</h3>
+      </article>
+      <article class="tv-card" id="tv-bench">
+        <h3>Vue TV — Remplaçants</h3>
+      </article>
+    </section>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "composeur-rugby-state";
+
+    const uid = (() => {
+      let inc = 0;
+      return () => `p_${Date.now().toString(36)}_${(inc++).toString(36)}`;
+    })();
+
+    const defaultState = () => ({
+      pool: [],
+      teams: [
+        {
+          id: uid(),
+          name: "Équipe 1",
+          starters: [],
+          bench: []
+        }
+      ],
+      playersText: ""
+    });
+
+    const escapeHTML = (value) => {
+      return String(value).replace(/[&<>"']/g, (char) => {
+        switch (char) {
+          case "&":
+            return "&amp;";
+          case "<":
+            return "&lt;";
+          case ">":
+            return "&gt;";
+          case '"':
+            return "&quot;";
+          case "'":
+            return "&#39;";
+          default:
+            return char;
+        }
+      });
+    };
+
+    const parseNames = (raw) => {
+      if (!raw) return [];
+      return raw
+        .split(/[\n;,]+/)
+        .map((name) => name.trim())
+        .filter((name) => name.length > 0);
+    };
+
+    const saveState = () => {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (err) {
+        console.warn("Impossible d'enregistrer l'état", err);
+      }
+    };
+
+    const loadState = () => {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== "object") return null;
+        return {
+          pool: Array.isArray(parsed.pool) ? parsed.pool : [],
+          teams: Array.isArray(parsed.teams)
+            ? parsed.teams.map((team) => ({
+                id: team.id || uid(),
+                name: team.name || "Équipe",
+                starters: Array.isArray(team.starters) ? team.starters : [],
+                bench: Array.isArray(team.bench) ? team.bench : []
+              }))
+            : defaultState().teams,
+          playersText: typeof parsed.playersText === "string" ? parsed.playersText : ""
+        };
+      } catch (err) {
+        console.warn("Impossible de charger l'état", err);
+        return null;
+      }
+    };
+
+    const findLocation = (playerId) => {
+      const poolIndex = state.pool.findIndex((p) => p.id === playerId);
+      if (poolIndex !== -1) {
+        return { type: "pool", index: poolIndex };
+      }
+      for (let t = 0; t < state.teams.length; t++) {
+        const team = state.teams[t];
+        const starterIndex = team.starters.findIndex((p) => p.id === playerId);
+        if (starterIndex !== -1) {
+          return { type: "starter", teamIndex: t, index: starterIndex };
+        }
+        const benchIndex = team.bench.findIndex((p) => p.id === playerId);
+        if (benchIndex !== -1) {
+          return { type: "bench", teamIndex: t, index: benchIndex };
+        }
+      }
+      return null;
+    };
+
+    const removeFromLocation = (location) => {
+      if (!location) return null;
+      if (location.type === "pool") {
+        return state.pool.splice(location.index, 1)[0] || null;
+      }
+      if (location.type === "starter") {
+        return state.teams[location.teamIndex].starters.splice(location.index, 1)[0] || null;
+      }
+      if (location.type === "bench") {
+        return state.teams[location.teamIndex].bench.splice(location.index, 1)[0] || null;
+      }
+      return null;
+    };
+
+    const moveToPool = (playerId) => {
+      const location = findLocation(playerId);
+      const player = removeFromLocation(location);
+      if (!player) return;
+      const exists = state.pool.some((p) => p.id === player.id);
+      if (!exists) {
+        state.pool.push(player);
+        state.pool.sort((a, b) => a.name.localeCompare(b.name, "fr"));
+      }
+    };
+
+    const placeStarter = (playerId, teamId) => {
+      const team = state.teams.find((t) => t.id === teamId);
+      if (!team) return;
+      const location = findLocation(playerId);
+      const player = removeFromLocation(location);
+      if (!player) return;
+      const already = team.starters.some((p) => p.id === player.id);
+      if (!already) {
+        team.starters.push(player);
+      }
+    };
+
+    const placeBench = (playerId, teamId) => {
+      const team = state.teams.find((t) => t.id === teamId);
+      if (!team) return;
+      const location = findLocation(playerId);
+      const player = removeFromLocation(location);
+      if (!player) return;
+      const already = team.bench.some((p) => p.id === player.id);
+      if (!already) {
+        team.bench.push(player);
+      }
+    };
+
+    const importPlayers = () => {
+      const names = parseNames(state.playersText);
+      if (!names.length) return;
+      const canonical = new Set();
+      state.pool.forEach((player) => canonical.add(player.name.toLowerCase()));
+      state.teams.forEach((team) => {
+        team.starters.forEach((player) => canonical.add(player.name.toLowerCase()));
+        team.bench.forEach((player) => canonical.add(player.name.toLowerCase()));
+      });
+      names.forEach((name) => {
+        const key = name.toLowerCase();
+        if (canonical.has(key)) return;
+        canonical.add(key);
+        state.pool.push({ id: uid(), name });
+      });
+      state.pool.sort((a, b) => a.name.localeCompare(b.name, "fr"));
+      state.playersText = "";
+      render();
+      saveState();
+    };
+
+    const deletePlayer = (playerId) => {
+      const location = findLocation(playerId);
+      removeFromLocation(location);
+      render();
+      saveState();
+    };
+
+    const addTeam = () => {
+      const nextIndex = state.teams.length + 1;
+      state.teams.push({ id: uid(), name: `Équipe ${nextIndex}`, starters: [], bench: [] });
+      render();
+      saveState();
+    };
+
+    const removeTeam = (teamId) => {
+      if (state.teams.length <= 1) return;
+      const index = state.teams.findIndex((team) => team.id === teamId);
+      if (index === -1) return;
+      const team = state.teams[index];
+      [...team.starters, ...team.bench].forEach((player) => {
+        const exists = state.pool.some((p) => p.id === player.id);
+        if (!exists) {
+          state.pool.push(player);
+        }
+      });
+      state.pool.sort((a, b) => a.name.localeCompare(b.name, "fr"));
+      state.teams.splice(index, 1);
+      render();
+      saveState();
+    };
+
+    const resetState = () => {
+      state = defaultState();
+      render();
+      saveState();
+    };
+
+    let state = loadState() || defaultState();
+
+    const buildPlayerElement = (player, context) => {
+      const item = document.createElement("div");
+      item.className = "player";
+      item.draggable = true;
+      item.dataset.playerId = player.id;
+      const safeName = escapeHTML(player.name);
+      item.innerHTML = `
+        <span class="name">${safeName}</span>
+        <div class="player-actions">
+          ${context !== "pool" ? '<button type="button" data-action="send-to-pool" title="Retour pool">↩</button>' : ""}
+          <button type="button" data-action="delete-player" title="Supprimer" aria-label="Supprimer" data-context="${context}">✕</button>
+        </div>
+      `;
+      return item;
+    };
+
+    const renderTeams = () => {
+      const wrapper = document.getElementById("teams-wrapper");
+      wrapper.innerHTML = "";
+      state.teams.forEach((team) => {
+        const card = document.createElement("article");
+        card.className = "team-card card";
+        const safeName = escapeHTML(team.name);
+        card.innerHTML = `
+          <div class="team-header">
+            <input type="text" value="${safeName}" data-team-id="${team.id}" class="team-name" />
+            <span class="badge">Tit. ${team.starters.length} · Remp. ${team.bench.length}</span>
+            <button type="button" class="secondary" data-action="delete-team" data-team-id="${team.id}" title="Supprimer l'équipe" style="border-radius: 10px; border: 1px solid var(--border); padding: 6px 10px;">✕</button>
+          </div>
+          <div class="list-block">
+            <div class="list-title">
+              <h3>Titulaires</h3>
+              <span class="badge">${team.starters.length}</span>
+            </div>
+            <div class="list ${team.starters.length === 0 ? "empty" : ""}" data-empty-label="Glisser ici" data-drop-target="starter" data-team-id="${team.id}"></div>
+          </div>
+          <div class="list-block">
+            <div class="list-title">
+              <h3>Remplaçants</h3>
+              <span class="badge">${team.bench.length}</span>
+            </div>
+            <div class="list ${team.bench.length === 0 ? "empty" : ""}" data-empty-label="Glisser ici" data-drop-target="bench" data-team-id="${team.id}"></div>
+          </div>
+        `;
+        wrapper.appendChild(card);
+        const startersContainer = card.querySelector('[data-drop-target="starter"]');
+        team.starters.forEach((player) => {
+          startersContainer.appendChild(buildPlayerElement(player, "starter"));
+        });
+        const benchContainer = card.querySelector('[data-drop-target="bench"]');
+        team.bench.forEach((player) => {
+          benchContainer.appendChild(buildPlayerElement(player, "bench"));
+        });
+      });
+    };
+
+    const renderPool = () => {
+      const pool = document.getElementById("pool-list");
+      pool.innerHTML = "";
+      if (state.pool.length === 0) {
+        pool.classList.add("empty");
+      } else {
+        pool.classList.remove("empty");
+      }
+      state.pool.forEach((player) => {
+        const item = buildPlayerElement(player, "pool");
+        pool.appendChild(item);
+      });
+    };
+
+    const renderTV = () => {
+      const startersView = document.getElementById("tv-starters");
+      const benchView = document.getElementById("tv-bench");
+      const startersContent = document.createElement("div");
+      const benchContent = document.createElement("div");
+      startersContent.className = "tv-content";
+      benchContent.className = "tv-content";
+      state.teams.forEach((team) => {
+        const startersBlock = document.createElement("div");
+        startersBlock.className = "tv-team";
+        startersBlock.innerHTML = `<h4>${escapeHTML(team.name)}</h4>`;
+        const startersList = document.createElement("div");
+        startersList.className = "tv-lineup";
+        team.starters.forEach((player, index) => {
+          const pill = document.createElement("span");
+          pill.className = "pill";
+          pill.textContent = `${String(index + 1).padStart(2, "0")} — ${player.name}`;
+          startersList.appendChild(pill);
+        });
+        if (!team.starters.length) {
+          const empty = document.createElement("span");
+          empty.className = "pill";
+          empty.textContent = "Aucun titulaire";
+          startersList.appendChild(empty);
+        }
+        startersBlock.appendChild(startersList);
+        startersContent.appendChild(startersBlock);
+
+        const benchBlock = document.createElement("div");
+        benchBlock.className = "tv-team";
+        benchBlock.innerHTML = `<h4>${escapeHTML(team.name)}</h4>`;
+        const benchList = document.createElement("div");
+        benchList.className = "tv-lineup";
+        team.bench.forEach((player, index) => {
+          const pill = document.createElement("span");
+          pill.className = "pill";
+          pill.textContent = `${String(index + 1).padStart(2, "0")} — ${player.name}`;
+          benchList.appendChild(pill);
+        });
+        if (!team.bench.length) {
+          const empty = document.createElement("span");
+          empty.className = "pill";
+          empty.textContent = "Aucun remplaçant";
+          benchList.appendChild(empty);
+        }
+        benchBlock.appendChild(benchList);
+        benchContent.appendChild(benchBlock);
+      });
+      startersView.querySelectorAll(".tv-content").forEach((el) => el.remove());
+      startersView.appendChild(startersContent);
+      benchView.querySelectorAll(".tv-content").forEach((el) => el.remove());
+      benchView.appendChild(benchContent);
+    };
+
+    const attachDnDHandlers = () => {
+      document.querySelectorAll(".player").forEach((el) => {
+        el.addEventListener("dragstart", (event) => {
+          const id = el.dataset.playerId;
+          event.dataTransfer.setData("text/plain", id);
+          event.dataTransfer.effectAllowed = "move";
+        });
+      });
+
+      document.querySelectorAll("[data-drop-target]").forEach((zone) => {
+        zone.addEventListener("dragover", (event) => {
+          event.preventDefault();
+          event.dataTransfer.dropEffect = "move";
+        });
+        zone.addEventListener("drop", (event) => {
+          event.preventDefault();
+          const playerId = event.dataTransfer.getData("text/plain");
+          const target = zone.dataset.dropTarget;
+          if (!playerId || !target) return;
+          if (target === "pool") {
+            moveToPool(playerId);
+          } else if (target === "starter") {
+            placeStarter(playerId, zone.dataset.teamId);
+          } else if (target === "bench") {
+            placeBench(playerId, zone.dataset.teamId);
+          }
+          render();
+          saveState();
+        });
+      });
+    };
+
+    const render = () => {
+      const textarea = document.getElementById("import-input");
+      if (document.activeElement !== textarea) {
+        textarea.value = state.playersText;
+      }
+      renderPool();
+      renderTeams();
+      renderTV();
+      attachDnDHandlers();
+    };
+
+    document.addEventListener("input", (event) => {
+      if (event.target.id === "import-input") {
+        state.playersText = event.target.value;
+      }
+      if (event.target.classList.contains("team-name")) {
+        const teamId = event.target.dataset.teamId;
+        const team = state.teams.find((t) => t.id === teamId);
+        if (team) {
+          team.name = event.target.value.trim() || "Équipe";
+          renderTV();
+          saveState();
+        }
+      }
+    });
+
+    document.addEventListener("click", (event) => {
+      const action = event.target.dataset.action;
+      if (!action) return;
+      if (action === "delete-player") {
+        const playerId = event.target.closest(".player").dataset.playerId;
+        if (event.target.dataset.context === "pool") {
+          deletePlayer(playerId);
+        } else {
+          moveToPool(playerId);
+          render();
+          saveState();
+        }
+      }
+      if (action === "send-to-pool") {
+        const playerId = event.target.closest(".player").dataset.playerId;
+        moveToPool(playerId);
+        render();
+        saveState();
+      }
+      if (action === "delete-team") {
+        const teamId = event.target.dataset.teamId;
+        removeTeam(teamId);
+      }
+    });
+
+    document.getElementById("import-btn").addEventListener("click", () => {
+      importPlayers();
+    });
+
+    document.getElementById("add-team-btn").addEventListener("click", () => {
+      addTeam();
+    });
+
+    document.getElementById("save-btn").addEventListener("click", () => {
+      saveState();
+    });
+
+    document.getElementById("load-btn").addEventListener("click", () => {
+      const loaded = loadState();
+      if (loaded) {
+        state = loaded;
+        render();
+      }
+    });
+
+    document.getElementById("reset-btn").addEventListener("click", () => {
+      if (confirm("Réinitialiser le composeur ?")) {
+        resetState();
+      }
+    });
+
+    document.getElementById("print-btn").addEventListener("click", () => {
+      window.print();
+    });
+
+    const poolList = document.getElementById("pool-list");
+    poolList.addEventListener("dragenter", (event) => {
+      event.preventDefault();
+    });
+
+    render();
+  </script>
+</body>
+</html>
