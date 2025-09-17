@@ -232,15 +232,15 @@
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      padding: 3px 6px;
+      padding: 1px 4px 1px 1px;
       border-radius: 12px;
       background: #fff;
       border: 1px solid rgba(15, 52, 143, 0.12);
       box-shadow: 0 4px 12px rgba(15, 52, 143, 0.08);
-      gap: 3px;
+      gap: 1px;
       overflow: hidden;
       --player-cover-color: #fff;
-      --action-reveal-space: 18px;
+      --action-reveal-space: 10px;
     }
 
     .pool-list .player {
@@ -282,7 +282,7 @@
 
     .player-actions {
       position: absolute;
-      right: 3px;
+      right: 2px;
       top: 50%;
       transform: translateY(-50%);
       display: inline-flex;
@@ -307,8 +307,8 @@
       background: #fff;
       color: var(--accent);
       font-size: 0.8rem;
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -443,13 +443,13 @@
     .position-slot {
       position: relative;
       border-radius: 18px;
-      padding: 6px 10px 10px;
+      padding: 4px 8px 8px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
       text-align: center;
-      gap: 4px;
+      gap: 2px;
       transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
       background: var(--slot-bg, #1f7a4a);
       box-shadow: var(--slot-shadow, 0 14px 28px rgba(31, 122, 74, 0.28));
@@ -494,7 +494,7 @@
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: calc(3px * var(--team-font-scale));
+      gap: calc(2px * var(--team-font-scale));
     }
 
     .role-slot {
@@ -503,11 +503,11 @@
       border-radius: 12px;
       border: none;
       background: var(--role-slot-bg, rgba(255, 255, 255, 0.16));
-      padding: calc(3px * var(--team-font-scale)) calc(10px * var(--team-font-scale));
+      padding: calc(2px * var(--team-font-scale)) calc(8px * var(--team-font-scale));
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: calc(30px * var(--team-font-scale));
+      min-height: calc(26px * var(--team-font-scale));
       transition: background 0.2s ease, box-shadow 0.2s ease;
       cursor: grab;
     }
@@ -533,7 +533,7 @@
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: calc(3px * var(--team-font-scale));
+      gap: calc(2px * var(--team-font-scale));
     }
 
     .role-player .placeholder {
@@ -542,7 +542,7 @@
       justify-content: center;
       font-size: calc(0.82rem * var(--team-font-scale) / var(--page-font-scale));
       color: var(--slot-text, #f5fffb);
-      padding: calc(3px * var(--team-font-scale)) calc(5px * var(--team-font-scale));
+      padding: calc(2px * var(--team-font-scale)) calc(4px * var(--team-font-scale));
       border-radius: 10px;
       border: none;
       background: var(--placeholder-bg, rgba(255, 255, 255, 0.18));
@@ -550,8 +550,8 @@
     }
 
     .position-slot .player {
-      padding: calc(3px * var(--team-font-scale)) calc(6px * var(--team-font-scale));
-      gap: calc(4px * var(--team-font-scale));
+      padding: calc(1.5px * var(--team-font-scale)) calc(4px * var(--team-font-scale));
+      gap: calc(2px * var(--team-font-scale));
     }
 
     .position-slot .player .name {
@@ -559,17 +559,17 @@
     }
 
     .position-slot .player button {
-      font-size: calc(0.8rem * var(--team-font-scale) / var(--page-font-scale));
-      width: calc(24px * var(--team-font-scale));
-      height: calc(24px * var(--team-font-scale));
+      font-size: calc(0.75rem * var(--team-font-scale) / var(--page-font-scale));
+      width: calc(20px * var(--team-font-scale));
+      height: calc(20px * var(--team-font-scale));
     }
 
     .player-role-icon {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: calc(16px * var(--team-font-scale));
-      height: calc(16px * var(--team-font-scale));
+      width: calc(14px * var(--team-font-scale));
+      height: calc(14px * var(--team-font-scale));
       color: #ffffff;
       flex: 0 0 auto;
     }
