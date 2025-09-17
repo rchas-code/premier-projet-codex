@@ -234,6 +234,12 @@
       color: var(--accent-alt);
     }
 
+    .teams {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
     .composition-card {
       display: flex;
       flex-direction: column;
@@ -245,7 +251,7 @@
       border: 1px solid rgba(12, 41, 92, 0.06);
     }
 
-    .composition-header {
+    .team-card .composition-header {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
@@ -253,34 +259,8 @@
       align-items: center;
     }
 
-    .composition-header h2 {
+    .team-card .composition-header h2 {
       font-size: 1.6rem;
-    }
-
-    .team-name-wrapper {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .team-name-label {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-    }
-
-    #team-name {
-      font: inherit;
-      font-weight: 600;
-      border: none;
-      background: transparent;
-      padding: 6px 0;
-      border-bottom: 2px solid transparent;
-      font-size: clamp(1.2rem, 2vw, 1.5rem);
-    }
-
-    #team-name:focus {
-      outline: none;
-      border-color: var(--accent);
     }
 
     .badge {
@@ -594,8 +574,6 @@
     <header>
       <h1>Composeur de XV de Rugby</h1>
       <div class="actions editor-only">
-        <button id="save-btn">Sauvegarder</button>
-        <button id="load-btn" class="secondary">Charger</button>
         <button id="print-btn" class="secondary">Imprimer</button>
         <button id="reset-btn" class="secondary">Réinitialiser</button>
       </div>
@@ -616,24 +594,51 @@
         </div>
       </section>
 
-      <section class="composition-card">
-        <div class="composition-header">
-          <div class="team-name-wrapper">
-            <span class="team-name-label">Nom de l'équipe</span>
-            <input type="text" id="team-name" value="Équipe" />
+      <section class="teams">
+        <div class="composition-card team-card" data-team-id="blue">
+          <div class="composition-header">
+            <h2>Équipe Bleue</h2>
+            <div class="badge-group">
+              <span class="badge" data-team-starters="blue">Tit. 0 / 15</span>
+              <span class="badge" data-team-substitutes="blue">Remp. 0 / 15</span>
+            </div>
           </div>
-          <div class="badge-group">
-            <span class="badge" id="starters-count">Tit. 0 / 15</span>
-            <span class="badge" id="substitutes-count">Remp. 0 / 15</span>
-          </div>
+          <div class="composition-field" data-team-field="blue"></div>
         </div>
-        <div class="composition-field" id="composition-field"></div>
+
+        <div class="composition-card team-card" data-team-id="green">
+          <div class="composition-header">
+            <h2>Équipe Verte</h2>
+            <div class="badge-group">
+              <span class="badge" data-team-starters="green">Tit. 0 / 15</span>
+              <span class="badge" data-team-substitutes="green">Remp. 0 / 15</span>
+            </div>
+          </div>
+          <div class="composition-field" data-team-field="green"></div>
+        </div>
+
+        <div class="composition-card team-card" data-team-id="neutral">
+          <div class="composition-header">
+            <h2>Équipe sans maillot</h2>
+            <div class="badge-group">
+              <span class="badge" data-team-starters="neutral">Tit. 0 / 15</span>
+              <span class="badge" data-team-substitutes="neutral">Remp. 0 / 15</span>
+            </div>
+          </div>
+          <div class="composition-field" data-team-field="neutral"></div>
+        </div>
       </section>
     </div>
   </div>
 
   <script>
     const STORAGE_KEY = "composeur-rugby-state";
+
+    const TEAM_PRESETS = [
+      { id: "blue", label: "Équipe Bleue" },
+      { id: "green", label: "Équipe Verte" },
+      { id: "neutral", label: "Équipe sans maillot" }
+    ];
 
     const uid = (() => {
       let inc = 0;
@@ -658,11 +663,26 @@
       { id: "pos-15", number: "15", label: "Arrière", row: 6, colStart: 4, colSpan: 2 }
     ];
 
+    const mapLineup = (source) => {
+      return POSITION_PRESET.map((slot) => {
+        const saved = Array.isArray(source) ? source.find((item) => item.id === slot.id) : null;
+        const starter = saved && isValidPlayer(saved.starter)
+          ? saved.starter
+          : saved && isValidPlayer(saved.player)
+          ? saved.player
+          : null;
+        const substitute = saved && isValidPlayer(saved.substitute) ? saved.substitute : null;
+        return { ...slot, starter, substitute };
+      });
+    };
+
     const defaultState = () => ({
       pool: [],
-      lineup: POSITION_PRESET.map((slot) => ({ ...slot, starter: null, substitute: null })),
       playersText: "",
-      teamName: "Équipe"
+      teams: TEAM_PRESETS.map((team) => ({
+        ...team,
+        lineup: POSITION_PRESET.map((slot) => ({ ...slot, starter: null, substitute: null }))
+      }))
     });
 
     const escapeHTML = (value) => {
@@ -698,18 +718,27 @@
         if (!raw) return null;
         const base = defaultState();
         base.playersText = typeof raw.playersText === "string" ? raw.playersText : "";
-        base.teamName = typeof raw.teamName === "string" && raw.teamName.trim() ? raw.teamName : base.teamName;
         base.pool = Array.isArray(raw.pool) ? raw.pool.filter(isValidPlayer) : [];
-        base.lineup = POSITION_PRESET.map((slot) => {
-          const saved = Array.isArray(raw.lineup) ? raw.lineup.find((item) => item.id === slot.id) : null;
-          const starter = saved && isValidPlayer(saved.starter)
-            ? saved.starter
-            : saved && isValidPlayer(saved.player)
-            ? saved.player
-            : null;
-          const substitute = saved && isValidPlayer(saved.substitute) ? saved.substitute : null;
-          return { ...slot, starter, substitute };
-        });
+        if (Array.isArray(raw.teams)) {
+          base.teams = base.teams.map((team) => {
+            const savedTeam = raw.teams.find((item) => item.id === team.id);
+            return {
+              ...team,
+              label:
+                savedTeam && typeof savedTeam.label === "string" && savedTeam.label.trim()
+                  ? savedTeam.label
+                  : team.label,
+              lineup: mapLineup(savedTeam && Array.isArray(savedTeam.lineup) ? savedTeam.lineup : [])
+            };
+          });
+        } else {
+          base.teams = base.teams.map((team, index) => {
+            if (index === 0) {
+              return { ...team, lineup: mapLineup(raw.lineup) };
+            }
+            return team;
+          });
+        }
         return base;
       } catch (error) {
         console.error("Impossible de charger l'état", error);
@@ -721,13 +750,15 @@
 
     const getAllPlayers = () => {
       const players = [...state.pool];
-      state.lineup.forEach((slot) => {
-        if (slot.starter) {
-          players.push(slot.starter);
-        }
-        if (slot.substitute) {
-          players.push(slot.substitute);
-        }
+      state.teams.forEach((team) => {
+        team.lineup.forEach((slot) => {
+          if (slot.starter) {
+            players.push(slot.starter);
+          }
+          if (slot.substitute) {
+            players.push(slot.substitute);
+          }
+        });
       });
       return players;
     };
@@ -763,15 +794,17 @@
         }
       };
       extractFrom(state.pool);
-      state.lineup.forEach((slot) => {
-        if (slot.starter && slot.starter.id === playerId) {
-          player = slot.starter;
-          slot.starter = null;
-        }
-        if (slot.substitute && slot.substitute.id === playerId) {
-          player = slot.substitute;
-          slot.substitute = null;
-        }
+      state.teams.forEach((team) => {
+        team.lineup.forEach((slot) => {
+          if (slot.starter && slot.starter.id === playerId) {
+            player = slot.starter;
+            slot.starter = null;
+          }
+          if (slot.substitute && slot.substitute.id === playerId) {
+            player = slot.substitute;
+            slot.substitute = null;
+          }
+        });
       });
       return player;
     };
@@ -785,8 +818,10 @@
       }
     };
 
-    const placeInPosition = (playerId, positionId, role = "starter") => {
-      const slot = state.lineup.find((item) => item.id === positionId);
+    const placeInPosition = (playerId, teamId, positionId, role = "starter") => {
+      const team = state.teams.find((item) => item.id === teamId);
+      if (!team) return;
+      const slot = team.lineup.find((item) => item.id === positionId);
       if (!slot) return;
       const incoming = takePlayer(playerId);
       if (!incoming) return;
@@ -811,13 +846,15 @@
         return false;
       };
       if (removeFrom(state.pool)) return;
-      state.lineup.forEach((slot) => {
-        if (slot.starter && slot.starter.id === playerId) {
-          slot.starter = null;
-        }
-        if (slot.substitute && slot.substitute.id === playerId) {
-          slot.substitute = null;
-        }
+      state.teams.forEach((team) => {
+        team.lineup.forEach((slot) => {
+          if (slot.starter && slot.starter.id === playerId) {
+            slot.starter = null;
+          }
+          if (slot.substitute && slot.substitute.id === playerId) {
+            slot.substitute = null;
+          }
+        });
       });
     };
 
@@ -869,10 +906,11 @@
       });
     };
 
-    const renderLineup = () => {
-      const field = document.getElementById("composition-field");
+    const renderTeamField = (team) => {
+      const field = document.querySelector(`[data-team-field="${team.id}"]`);
+      if (!field) return;
       field.innerHTML = "";
-      state.lineup.forEach((slot) => {
+      team.lineup.forEach((slot) => {
         const slotEl = document.createElement("div");
         slotEl.className = "position-slot";
         slotEl.style.gridRow = slot.row;
@@ -889,6 +927,7 @@
         const starterSlot = document.createElement("div");
         starterSlot.className = `role-slot starter${slot.starter ? " filled" : ""}`;
         starterSlot.dataset.dropTarget = "position";
+        starterSlot.dataset.teamId = team.id;
         starterSlot.dataset.positionId = slot.id;
         starterSlot.dataset.role = "starter";
         starterSlot.title = "Titulaire";
@@ -905,6 +944,7 @@
         const substituteSlot = document.createElement("div");
         substituteSlot.className = `role-slot substitute${slot.substitute ? " filled" : ""}`;
         substituteSlot.dataset.dropTarget = "position";
+        substituteSlot.dataset.teamId = team.id;
         substituteSlot.dataset.positionId = slot.id;
         substituteSlot.dataset.role = "substitute";
         substituteSlot.title = "Remplaçant";
@@ -924,11 +964,29 @@
       });
     };
 
+    const renderTeams = () => {
+      state.teams.forEach((team) => {
+        const heading = document.querySelector(`.team-card[data-team-id="${team.id}"] h2`);
+        if (heading && heading.textContent !== team.label) {
+          heading.textContent = team.label;
+        }
+        renderTeamField(team);
+      });
+    };
+
     const updateBadges = () => {
-      const startersCount = state.lineup.filter((slot) => !!slot.starter).length;
-      const substitutesCount = state.lineup.filter((slot) => !!slot.substitute).length;
-      document.getElementById("starters-count").textContent = `Tit. ${startersCount} / 15`;
-      document.getElementById("substitutes-count").textContent = `Remp. ${substitutesCount} / 15`;
+      state.teams.forEach((team) => {
+        const startersCount = team.lineup.filter((slot) => !!slot.starter).length;
+        const substitutesCount = team.lineup.filter((slot) => !!slot.substitute).length;
+        const startersBadge = document.querySelector(`[data-team-starters="${team.id}"]`);
+        const substitutesBadge = document.querySelector(`[data-team-substitutes="${team.id}"]`);
+        if (startersBadge) {
+          startersBadge.textContent = `Tit. ${startersCount} / 15`;
+        }
+        if (substitutesBadge) {
+          substitutesBadge.textContent = `Remp. ${substitutesCount} / 15`;
+        }
+      });
     };
 
     const attachDnDHandlers = () => {
@@ -953,7 +1011,7 @@
           if (target === "pool") {
             moveToPool(playerId);
           } else if (target === "position") {
-            placeInPosition(playerId, zone.dataset.positionId, zone.dataset.role);
+            placeInPosition(playerId, zone.dataset.teamId, zone.dataset.positionId, zone.dataset.role);
           }
           render();
           saveState();
@@ -966,12 +1024,8 @@
       if (document.activeElement !== textarea) {
         textarea.value = state.playersText;
       }
-      const teamNameInput = document.getElementById("team-name");
-      if (document.activeElement !== teamNameInput) {
-        teamNameInput.value = state.teamName;
-      }
       renderPool();
-      renderLineup();
+      renderTeams();
       updateBadges();
       attachDnDHandlers();
     };
@@ -979,10 +1033,6 @@
     document.addEventListener("input", (event) => {
       if (event.target.id === "import-input") {
         state.playersText = event.target.value;
-      }
-      if (event.target.id === "team-name") {
-        state.teamName = event.target.value.trim() || "Équipe";
-        saveState();
       }
     });
 
@@ -1005,18 +1055,6 @@
 
     document.getElementById("import-btn").addEventListener("click", () => {
       importPlayers();
-    });
-
-    document.getElementById("save-btn").addEventListener("click", () => {
-      saveState();
-    });
-
-    document.getElementById("load-btn").addEventListener("click", () => {
-      const loaded = loadState();
-      if (loaded) {
-        state = loaded;
-        render();
-      }
     });
 
     document.getElementById("reset-btn").addEventListener("click", () => {
