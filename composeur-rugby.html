@@ -196,6 +196,7 @@
       border: 1px solid rgba(15, 52, 143, 0.12);
       box-shadow: 0 4px 12px rgba(15, 52, 143, 0.08);
       gap: 10px;
+      overflow: hidden;
     }
 
     .pool-list .player {
@@ -211,7 +212,8 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      padding-right: 28px;
+      font-size: 0.95rem;
+      transition: font-size 0.18s ease, padding 0.18s ease;
     }
 
     .player-actions {
@@ -229,6 +231,11 @@
     .player:hover .player-actions {
       opacity: 1;
       pointer-events: auto;
+    }
+
+    .player:hover .name {
+      font-size: 0.88rem;
+      padding-right: 24px;
     }
 
     .player button {
