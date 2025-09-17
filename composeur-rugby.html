@@ -60,9 +60,12 @@
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
+      margin-left: auto;
+      justify-content: flex-end;
     }
 
-    .actions button {
+    .actions button,
+    #import-btn {
       border: 1px solid transparent;
       padding: 8px 16px;
       border-radius: 999px;
@@ -77,15 +80,49 @@
       color: var(--accent);
     }
 
-    .actions button:hover {
+    .actions button:hover,
+    #import-btn:hover {
       transform: translateY(-1px);
       box-shadow: 0 6px 18px rgba(15, 52, 143, 0.2);
     }
 
     .layout {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: minmax(260px, 320px) 1fr;
       gap: 24px;
+    }
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: var(--card);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 12px 30px rgba(15, 35, 95, 0.08);
+      border: 1px solid rgba(12, 41, 92, 0.06);
+      align-self: stretch;
+      min-height: 100%;
+      border-right: 1px solid var(--border);
+    }
+
+    .sidebar h2 {
+      margin-bottom: 4px;
+    }
+
+    .sidebar #import-btn {
+      align-self: flex-start;
+    }
+
+    .sidebar .pool {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .sidebar .pool-list {
+      flex: 1;
     }
 
     .card {
@@ -332,7 +369,6 @@
     <header>
       <h1>Composeur de XV de Rugby</h1>
       <div class="actions editor-only">
-        <button id="import-btn">Ajouter</button>
         <button id="save-btn">Sauvegarder</button>
         <button id="load-btn" class="secondary">Charger</button>
         <button id="print-btn" class="secondary">Imprimer</button>
@@ -341,16 +377,17 @@
     </header>
 
     <div class="layout editor-only">
-      <section class="card">
+      <aside class="sidebar">
         <h2>Effectif &amp; Pool</h2>
         <p class="subtitle">Collez votre effectif (un joueur par ligne, virgule ou point-virgule) puis répartissez-les via glisser-déposer.</p>
         <textarea id="import-input" placeholder="Ex. Antoine Dupont; Romain Ntamack, Grégory Alldritt"></textarea>
+        <button id="import-btn">Ajouter</button>
         <div class="pool">
           <h3>Pool disponible</h3>
           <div id="pool-list" class="pool-list" data-drop-target="pool" data-empty-label="Aucun joueur">
           </div>
         </div>
-      </section>
+      </aside>
 
       <section class="card">
         <div class="team-header" style="margin-bottom: 12px;">
