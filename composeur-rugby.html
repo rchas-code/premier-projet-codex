@@ -284,55 +284,64 @@
       flex: 1;
       display: grid;
       grid-template-columns: repeat(7, minmax(70px, 1fr));
-      grid-template-rows: repeat(6, minmax(95px, auto));
-      gap: 12px;
-      padding: 8px 0 12px;
+      grid-template-rows: repeat(6, 1fr);
+      gap: 14px;
+      padding: 12px 0 20px;
+      min-height: 100%;
+      align-items: center;
+      align-content: space-between;
     }
 
     .position-card {
       display: flex;
       flex-direction: column;
-      align-items: stretch;
-      gap: 8px;
-      background: rgba(255, 255, 255, 0.92);
-      border-radius: 14px;
-      padding: 12px;
-      box-shadow: 0 8px 18px rgba(8, 38, 70, 0.25);
+      align-items: center;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: 0 10px 24px rgba(8, 38, 70, 0.24);
+      border: 1px solid rgba(11, 61, 145, 0.12);
       color: #1f2633;
-      width: min(210px, 100%);
+      width: min(220px, 100%);
       justify-self: center;
     }
 
     .position-number {
       display: inline-flex;
-      align-self: flex-start;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: rgba(11, 61, 145, 0.12);
-      color: var(--accent);
-      font-weight: 600;
-      font-size: 0.9rem;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(11, 61, 145, 0.88), rgba(0, 168, 232, 0.88));
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.1rem;
+      box-shadow: 0 6px 15px rgba(9, 36, 66, 0.3);
     }
 
     .position-label {
       font-size: 0.95rem;
       font-weight: 600;
+      text-align: center;
     }
 
     .slots {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
+      width: 100%;
     }
 
     .slot {
       display: flex;
       flex-direction: column;
       gap: 6px;
-      min-height: 78px;
+      min-height: 84px;
       border-radius: 12px;
-      border: 1px dashed rgba(11, 61, 145, 0.25);
-      background: rgba(11, 61, 145, 0.05);
+      border: 1px dashed rgba(11, 61, 145, 0.32);
+      background: rgba(11, 61, 145, 0.06);
       padding: 10px;
       transition: border-color 0.2s ease, background 0.2s ease;
     }
@@ -345,19 +354,28 @@
       color: rgba(11, 61, 145, 0.85);
     }
 
+    .slot-content {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+      justify-content: center;
+    }
+
     .slot-placeholder {
+      display: none;
       text-align: center;
       color: var(--text-muted);
       font-size: 0.8rem;
       padding: 6px 4px;
     }
 
-    .slot.empty {
-      justify-content: center;
-    }
-
     .slot.empty .slot-label {
       color: rgba(31, 38, 51, 0.6);
+    }
+
+    .slot.empty .slot-placeholder {
+      display: block;
     }
 
     .slot.empty .slot-content {
@@ -545,6 +563,15 @@
       { number: 3, label: "Pilier droit", row: 6, col: 6 }
     ];
 
+    const DEFAULT_PLAYERS = [
+      "Lucas Marcelli",
+      "Avatar Jaster Singh",
+      "Paul Tobin",
+      "Mathieu Jalibert",
+      "Antoine Dupont",
+      "Grégory Alldritt"
+    ];
+
     const createEmptyLineup = () => {
       const lineup = {};
       POSITIONS.forEach(({ number }) => {
@@ -559,11 +586,16 @@
       return { id: player.id, name: player.name };
     };
 
-    const defaultState = () => ({
-      pool: [],
-      lineup: createEmptyLineup(),
-      playersText: ""
-    });
+      const defaultState = () => {
+        const pool = DEFAULT_PLAYERS.slice()
+          .sort((a, b) => a.localeCompare(b, "fr"))
+          .map((name) => ({ id: uid(), name }));
+        return {
+          pool,
+          lineup: createEmptyLineup(),
+          playersText: ""
+        };
+      };
 
     const parseNames = (raw) => {
       if (!raw) return [];
@@ -707,7 +739,10 @@
     };
 
     const importPlayers = () => {
-      const names = parseNames(state.playersText);
+      const textarea = document.getElementById("import-input");
+      const rawNames = textarea ? textarea.value : state.playersText;
+      state.playersText = rawNames;
+      const names = parseNames(rawNames);
       if (!names.length) return;
       const existing = new Set();
       state.pool.forEach((player) => existing.add(player.name.toLowerCase()));
@@ -724,6 +759,9 @@
       });
       state.pool.sort((a, b) => a.name.localeCompare(b.name, "fr"));
       state.playersText = "";
+      if (textarea) {
+        textarea.value = "";
+      }
       render();
       saveState();
     };
@@ -837,9 +875,9 @@
             content.appendChild(element);
           } else {
             slot.classList.add("empty");
-            slot.appendChild(placeholder);
           }
 
+          slot.appendChild(placeholder);
           slot.appendChild(content);
           slots.appendChild(slot);
         });
