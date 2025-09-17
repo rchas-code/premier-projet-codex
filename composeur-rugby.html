@@ -351,13 +351,6 @@
       min-height: 34px;
     }
 
-    .position-player {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
     .position-slot .player {
       width: 100%;
       background: rgba(255, 255, 255, 0.95);
@@ -366,21 +359,59 @@
       box-shadow: none;
     }
 
-    .composition-bench {
+    .position-player {
+      width: 100%;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
 
-    .composition-bench .list {
-      background: rgba(11, 61, 145, 0.04);
-    }
-
-    .list-title {
+    .role-slot {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px dashed rgba(255, 255, 255, 0.45);
+      background: rgba(255, 255, 255, 0.12);
+      padding: 10px;
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
+      gap: 6px;
+      align-items: stretch;
+      transition: background 0.2s ease, border-color 0.2s ease;
+      cursor: grab;
+    }
+
+    .role-slot.filled {
+      border-style: solid;
+      border-color: rgba(255, 255, 255, 0.75);
+      background: rgba(255, 255, 255, 0.18);
+      cursor: default;
+    }
+
+    .role-slot .role-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .role-player {
+      min-height: 52px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .role-player .placeholder {
+      display: inline-flex;
       align-items: center;
-      margin-bottom: 8px;
+      justify-content: center;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.75);
+      padding: 8px;
+      border-radius: 10px;
+      border: 1px dashed rgba(255, 255, 255, 0.45);
+      background: rgba(12, 75, 38, 0.35);
+      pointer-events: none;
     }
 
     .editor-only {
@@ -508,17 +539,10 @@
           </div>
           <div class="badge-group">
             <span class="badge" id="starters-count">Tit. 0 / 15</span>
-            <span class="badge" id="bench-count">Remp. 0</span>
+            <span class="badge" id="substitutes-count">Remp. 0 / 15</span>
           </div>
         </div>
         <div class="composition-field" id="composition-field"></div>
-        <div class="composition-bench">
-          <div class="list-title">
-            <h3>Remplaçants</h3>
-            <span class="badge" id="bench-count-inline">0</span>
-          </div>
-          <div class="list" id="bench-list" data-drop-target="bench" data-empty-label="Glisser ici"></div>
-        </div>
       </section>
     </div>
   </div>
@@ -551,8 +575,7 @@
 
     const defaultState = () => ({
       pool: [],
-      bench: [],
-      lineup: POSITION_PRESET.map((slot) => ({ ...slot, player: null })),
+      lineup: POSITION_PRESET.map((slot) => ({ ...slot, starter: null, substitute: null })),
       playersText: "",
       teamName: "Équipe"
     });
@@ -592,11 +615,15 @@
         base.playersText = typeof raw.playersText === "string" ? raw.playersText : "";
         base.teamName = typeof raw.teamName === "string" && raw.teamName.trim() ? raw.teamName : base.teamName;
         base.pool = Array.isArray(raw.pool) ? raw.pool.filter(isValidPlayer) : [];
-        base.bench = Array.isArray(raw.bench) ? raw.bench.filter(isValidPlayer) : [];
         base.lineup = POSITION_PRESET.map((slot) => {
           const saved = Array.isArray(raw.lineup) ? raw.lineup.find((item) => item.id === slot.id) : null;
-          const player = saved && isValidPlayer(saved.player) ? saved.player : null;
-          return { ...slot, player };
+          const starter = saved && isValidPlayer(saved.starter)
+            ? saved.starter
+            : saved && isValidPlayer(saved.player)
+            ? saved.player
+            : null;
+          const substitute = saved && isValidPlayer(saved.substitute) ? saved.substitute : null;
+          return { ...slot, starter, substitute };
         });
         return base;
       } catch (error) {
@@ -608,10 +635,13 @@
     let state = loadState() || defaultState();
 
     const getAllPlayers = () => {
-      const players = [...state.pool, ...state.bench];
+      const players = [...state.pool];
       state.lineup.forEach((slot) => {
-        if (slot.player) {
-          players.push(slot.player);
+        if (slot.starter) {
+          players.push(slot.starter);
+        }
+        if (slot.substitute) {
+          players.push(slot.substitute);
         }
       });
       return players;
@@ -648,11 +678,14 @@
         }
       };
       extractFrom(state.pool);
-      extractFrom(state.bench);
       state.lineup.forEach((slot) => {
-        if (slot.player && slot.player.id === playerId) {
-          player = slot.player;
-          slot.player = null;
+        if (slot.starter && slot.starter.id === playerId) {
+          player = slot.starter;
+          slot.starter = null;
+        }
+        if (slot.substitute && slot.substitute.id === playerId) {
+          player = slot.substitute;
+          slot.substitute = null;
         }
       });
       return player;
@@ -667,28 +700,20 @@
       }
     };
 
-    const placeOnBench = (playerId) => {
-      const player = takePlayer(playerId);
-      if (!player) return;
-      if (!state.bench.some((item) => item.id === player.id)) {
-        state.bench.push(player);
-      }
-    };
-
-    const placeInPosition = (playerId, positionId) => {
+    const placeInPosition = (playerId, positionId, role = "starter") => {
       const slot = state.lineup.find((item) => item.id === positionId);
       if (!slot) return;
       const incoming = takePlayer(playerId);
       if (!incoming) return;
-      if (slot.player && slot.player.id !== incoming.id) {
-        const previous = slot.player;
-        slot.player = null;
+      const key = role === "substitute" ? "substitute" : "starter";
+      const previous = slot[key];
+      if (previous && previous.id !== incoming.id) {
         if (!state.pool.some((item) => item.id === previous.id)) {
           state.pool.push(previous);
           state.pool.sort((a, b) => a.name.localeCompare(b.name, "fr"));
         }
       }
-      slot.player = incoming;
+      slot[key] = incoming;
     };
 
     const deletePlayer = (playerId) => {
@@ -701,10 +726,12 @@
         return false;
       };
       if (removeFrom(state.pool)) return;
-      if (removeFrom(state.bench)) return;
       state.lineup.forEach((slot) => {
-        if (slot.player && slot.player.id === playerId) {
-          slot.player = null;
+        if (slot.starter && slot.starter.id === playerId) {
+          slot.starter = null;
+        }
+        if (slot.substitute && slot.substitute.id === playerId) {
+          slot.substitute = null;
         }
       });
     };
@@ -757,27 +784,12 @@
       });
     };
 
-    const renderBench = () => {
-      const bench = document.getElementById("bench-list");
-      bench.innerHTML = "";
-      if (state.bench.length === 0) {
-        bench.classList.add("empty");
-      } else {
-        bench.classList.remove("empty");
-      }
-      state.bench.forEach((player) => {
-        bench.appendChild(buildPlayerElement(player, "bench"));
-      });
-    };
-
     const renderLineup = () => {
       const field = document.getElementById("composition-field");
       field.innerHTML = "";
       state.lineup.forEach((slot) => {
         const slotEl = document.createElement("div");
-        slotEl.className = `position-slot${slot.player ? " filled" : ""}`;
-        slotEl.dataset.dropTarget = "position";
-        slotEl.dataset.positionId = slot.id;
+        slotEl.className = "position-slot";
         slotEl.style.gridRow = slot.row;
         slotEl.style.gridColumn = slot.col;
         slotEl.innerHTML = `
@@ -785,20 +797,52 @@
           <span class="position-label">${slot.label}</span>
           <div class="position-player"></div>
         `;
-        if (slot.player) {
-          const container = slotEl.querySelector(".position-player");
-          const playerEl = buildPlayerElement(slot.player, "position");
-          container.appendChild(playerEl);
+
+        const container = slotEl.querySelector(".position-player");
+
+        const starterSlot = document.createElement("div");
+        starterSlot.className = `role-slot starter${slot.starter ? " filled" : ""}`;
+        starterSlot.dataset.dropTarget = "position";
+        starterSlot.dataset.positionId = slot.id;
+        starterSlot.dataset.role = "starter";
+        starterSlot.innerHTML = `
+          <span class="role-label">Titulaire</span>
+          <div class="role-player"></div>
+        `;
+        const starterContainer = starterSlot.querySelector(".role-player");
+        if (slot.starter) {
+          starterContainer.appendChild(buildPlayerElement(slot.starter, "position"));
+        } else {
+          starterContainer.innerHTML = '<span class="placeholder">Glisser ici</span>';
         }
+
+        const substituteSlot = document.createElement("div");
+        substituteSlot.className = `role-slot substitute${slot.substitute ? " filled" : ""}`;
+        substituteSlot.dataset.dropTarget = "position";
+        substituteSlot.dataset.positionId = slot.id;
+        substituteSlot.dataset.role = "substitute";
+        substituteSlot.innerHTML = `
+          <span class="role-label">Remplaçant</span>
+          <div class="role-player"></div>
+        `;
+        const substituteContainer = substituteSlot.querySelector(".role-player");
+        if (slot.substitute) {
+          substituteContainer.appendChild(buildPlayerElement(slot.substitute, "position"));
+        } else {
+          substituteContainer.innerHTML = '<span class="placeholder">Glisser ici</span>';
+        }
+
+        container.appendChild(starterSlot);
+        container.appendChild(substituteSlot);
         field.appendChild(slotEl);
       });
     };
 
     const updateBadges = () => {
-      const startersCount = state.lineup.filter((slot) => !!slot.player).length;
+      const startersCount = state.lineup.filter((slot) => !!slot.starter).length;
+      const substitutesCount = state.lineup.filter((slot) => !!slot.substitute).length;
       document.getElementById("starters-count").textContent = `Tit. ${startersCount} / 15`;
-      document.getElementById("bench-count").textContent = `Remp. ${state.bench.length}`;
-      document.getElementById("bench-count-inline").textContent = state.bench.length;
+      document.getElementById("substitutes-count").textContent = `Remp. ${substitutesCount} / 15`;
     };
 
     const attachDnDHandlers = () => {
@@ -822,10 +866,8 @@
           if (!playerId || !target) return;
           if (target === "pool") {
             moveToPool(playerId);
-          } else if (target === "bench") {
-            placeOnBench(playerId);
           } else if (target === "position") {
-            placeInPosition(playerId, zone.dataset.positionId);
+            placeInPosition(playerId, zone.dataset.positionId, zone.dataset.role);
           }
           render();
           saveState();
@@ -843,7 +885,6 @@
         teamNameInput.value = state.teamName;
       }
       renderPool();
-      renderBench();
       renderLineup();
       updateBadges();
       attachDnDHandlers();
