@@ -158,13 +158,22 @@
     .pool-list,
     .list {
       display: flex;
-      flex-direction: column;
       gap: 8px;
       min-height: 120px;
       padding: 12px;
       border-radius: 16px;
       border: 1px dashed var(--border);
       background: #f9fbff;
+    }
+
+    .pool-list {
+      flex-wrap: wrap;
+      align-items: flex-start;
+      align-content: flex-start;
+    }
+
+    .list {
+      flex-direction: column;
     }
 
     .pool-list.empty::after,
@@ -187,6 +196,15 @@
       border: 1px solid rgba(15, 52, 143, 0.12);
       box-shadow: 0 4px 12px rgba(15, 52, 143, 0.08);
       gap: 10px;
+      overflow: hidden;
+      --player-cover-color: #fff;
+      --action-reveal-space: 32px;
+    }
+
+    .pool-list .player {
+      flex: 0 0 auto;
+      width: fit-content;
+      max-width: 100%;
     }
 
     .player .name {
@@ -196,7 +214,28 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      padding-right: 28px;
+      font-size: 0.95rem;
+      position: relative;
+      z-index: 0;
+    }
+
+    .player .name::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: var(--action-reveal-space);
+      pointer-events: none;
+      z-index: 1;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        var(--player-cover-color) 68%,
+        var(--player-cover-color) 100%
+      );
+      opacity: 0;
+      transition: opacity 0.18s ease;
     }
 
     .player-actions {
@@ -209,6 +248,7 @@
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.2s ease;
+      z-index: 4;
     }
 
     .player:hover .player-actions {
@@ -216,9 +256,13 @@
       pointer-events: auto;
     }
 
+    .player:hover .name::after {
+      opacity: 1;
+    }
+
     .player button {
-      border: none;
-      background: rgba(15, 52, 143, 0.08);
+      border: 1px solid rgba(15, 52, 143, 0.18);
+      background: #fff;
       color: var(--accent);
       font-size: 0.85rem;
       width: 26px;
@@ -227,11 +271,14 @@
       align-items: center;
       justify-content: center;
       border-radius: 50%;
+      box-shadow: 0 2px 6px rgba(15, 52, 143, 0.12);
     }
 
     .player button:hover {
-      background: rgba(15, 52, 143, 0.18);
+      background: #fff;
       color: var(--accent-alt);
+      border-color: rgba(0, 168, 232, 0.4);
+      box-shadow: 0 3px 8px rgba(0, 168, 232, 0.25);
     }
 
     .teams {
@@ -375,10 +422,11 @@
 
     .position-slot .player {
       width: 100%;
-      background: rgba(255, 255, 255, 0.95);
+      background: #fff;
       color: var(--accent);
       border: none;
       box-shadow: none;
+      --player-cover-color: #fff;
     }
 
     .position-player {
@@ -886,7 +934,7 @@
         const backBtn = document.createElement("button");
         backBtn.type = "button";
         backBtn.dataset.action = "send-to-pool";
-        backBtn.title = "Retour au pool";
+        backBtn.title = "Remettre dans l'effectif";
         backBtn.textContent = "↩";
         actions.appendChild(backBtn);
       }
