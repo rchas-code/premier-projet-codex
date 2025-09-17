@@ -84,8 +84,9 @@
 
     .layout {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: minmax(320px, 33%) 1fr;
       gap: 24px;
+      align-items: start;
     }
 
     .card {
@@ -122,6 +123,53 @@
       border-radius: 16px;
       border: 1px dashed var(--border);
       background: #f9fbff;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 24px;
+      max-height: calc(100vh - 48px);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .sidebar > div:first-child {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sidebar .subtitle {
+      margin: 0;
+    }
+
+    .sidebar #import-btn {
+      border: 1px solid transparent;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-alt));
+      color: #fff;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      align-self: flex-start;
+    }
+
+    .sidebar #import-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(15, 52, 143, 0.2);
+    }
+
+    .sidebar .pool {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .sidebar .pool-list {
+      flex: 1;
+      overflow-y: auto;
     }
 
     .pool-list.empty::after,
@@ -268,6 +316,24 @@
       .layout {
         grid-template-columns: 1fr;
       }
+
+      .sidebar {
+        position: static;
+        max-height: none;
+        overflow: visible;
+      }
+
+      .sidebar .pool {
+        flex: initial;
+      }
+
+      .sidebar .pool-list {
+        max-height: none;
+      }
+
+      .sidebar #import-btn {
+        width: 100%;
+      }
     }
 
     @media (max-width: 600px) {
@@ -283,6 +349,10 @@
 
       .actions button {
         flex: 1 1 auto;
+      }
+
+      .sidebar #import-btn {
+        margin-top: 8px;
       }
     }
 
@@ -332,7 +402,6 @@
     <header>
       <h1>Composeur de XV de Rugby</h1>
       <div class="actions editor-only">
-        <button id="import-btn">Ajouter</button>
         <button id="save-btn">Sauvegarder</button>
         <button id="load-btn" class="secondary">Charger</button>
         <button id="print-btn" class="secondary">Imprimer</button>
@@ -341,12 +410,15 @@
     </header>
 
     <div class="layout editor-only">
-      <section class="card">
-        <h2>Effectif &amp; Pool</h2>
-        <p class="subtitle">Collez votre effectif (un joueur par ligne, virgule ou point-virgule) puis répartissez-les via glisser-déposer.</p>
+      <section class="card sidebar">
+        <div>
+          <h2>Joueurs présents</h2>
+          <p class="subtitle">Commencez par entrer tous vos joueurs ici. Puis créez votre composition.</p>
+        </div>
         <textarea id="import-input" placeholder="Ex. Antoine Dupont; Romain Ntamack, Grégory Alldritt"></textarea>
+        <button id="import-btn">Ajouter les joueurs</button>
         <div class="pool">
-          <h3>Pool disponible</h3>
+          <h3>Effectif du jour</h3>
           <div id="pool-list" class="pool-list" data-drop-target="pool" data-empty-label="Aucun joueur">
           </div>
         </div>
