@@ -306,7 +306,7 @@
       background: linear-gradient(180deg, #15733b 0%, #0f9d58 60%, #0a7b34 100%);
       box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.1);
       display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-columns: repeat(12, minmax(0, 1fr));
       grid-auto-rows: minmax(78px, 1fr);
       gap: 12px;
       color: #fff;
@@ -365,12 +365,6 @@
       color: var(--accent);
       font-weight: 700;
       font-size: 1.1rem;
-    }
-
-    .position-label {
-      font-size: 0.85rem;
-      color: rgba(255, 255, 255, 0.85);
-      min-height: 34px;
     }
 
     .position-slot .player {
@@ -599,21 +593,21 @@
     })();
 
     const POSITION_PRESET = [
-      { id: "pos-1", number: "1", label: "Pilier gauche", row: 1, col: 1 },
-      { id: "pos-2", number: "2", label: "Talonneur", row: 1, col: 3 },
-      { id: "pos-3", number: "3", label: "Pilier droit", row: 1, col: 5 },
-      { id: "pos-4", number: "4", label: "Deuxième ligne", row: 2, col: 2 },
-      { id: "pos-5", number: "5", label: "Deuxième ligne", row: 2, col: 4 },
-      { id: "pos-6", number: "6", label: "Troisième ligne aile", row: 3, col: 1 },
-      { id: "pos-7", number: "7", label: "Troisième ligne aile", row: 3, col: 5 },
-      { id: "pos-8", number: "8", label: "Troisième ligne centre", row: 3, col: 3 },
-      { id: "pos-9", number: "9", label: "Demi de mêlée", row: 4, col: 2 },
-      { id: "pos-10", number: "10", label: "Demi d'ouverture", row: 4, col: 4 },
-      { id: "pos-11", number: "11", label: "Ailier gauche", row: 5, col: 1 },
-      { id: "pos-12", number: "12", label: "Centre intérieur", row: 5, col: 2 },
-      { id: "pos-13", number: "13", label: "Centre extérieur", row: 5, col: 4 },
-      { id: "pos-14", number: "14", label: "Ailier droit", row: 5, col: 5 },
-      { id: "pos-15", number: "15", label: "Arrière", row: 6, col: 3 }
+      { id: "pos-1", number: "1", label: "Pilier gauche", row: 1, colStart: 2, colSpan: 3 },
+      { id: "pos-2", number: "2", label: "Talonneur", row: 1, colStart: 5, colSpan: 3 },
+      { id: "pos-3", number: "3", label: "Pilier droit", row: 1, colStart: 8, colSpan: 3 },
+      { id: "pos-4", number: "4", label: "Deuxième ligne", row: 2, colStart: 4, colSpan: 3 },
+      { id: "pos-5", number: "5", label: "Deuxième ligne", row: 2, colStart: 7, colSpan: 3 },
+      { id: "pos-6", number: "6", label: "Troisième ligne aile", row: 3, colStart: 1, colSpan: 3 },
+      { id: "pos-7", number: "7", label: "Troisième ligne aile", row: 3, colStart: 9, colSpan: 3 },
+      { id: "pos-8", number: "8", label: "Troisième ligne centre", row: 3, colStart: 5, colSpan: 3 },
+      { id: "pos-9", number: "9", label: "Demi de mêlée", row: 4, colStart: 4, colSpan: 3 },
+      { id: "pos-10", number: "10", label: "Demi d'ouverture", row: 4, colStart: 7, colSpan: 3 },
+      { id: "pos-11", number: "11", label: "Ailier gauche", row: 5, colStart: 1, colSpan: 3 },
+      { id: "pos-12", number: "12", label: "Centre intérieur", row: 5, colStart: 4, colSpan: 3 },
+      { id: "pos-13", number: "13", label: "Centre extérieur", row: 5, colStart: 7, colSpan: 3 },
+      { id: "pos-14", number: "14", label: "Ailier droit", row: 5, colStart: 10, colSpan: 3 },
+      { id: "pos-15", number: "15", label: "Arrière", row: 6, colStart: 5, colSpan: 3 }
     ];
 
     const defaultState = () => ({
@@ -834,10 +828,11 @@
         const slotEl = document.createElement("div");
         slotEl.className = "position-slot";
         slotEl.style.gridRow = slot.row;
-        slotEl.style.gridColumn = slot.col;
+        const colStart = typeof slot.colStart === "number" ? slot.colStart : slot.col || 1;
+        const colSpan = typeof slot.colSpan === "number" ? slot.colSpan : 1;
+        slotEl.style.gridColumn = `${colStart} / span ${colSpan}`;
         slotEl.innerHTML = `
           <span class="position-number">${slot.number}</span>
-          <span class="position-label">${slot.label}</span>
           <div class="position-player"></div>
         `;
 
