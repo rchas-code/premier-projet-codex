@@ -175,39 +175,61 @@
     }
 
     .player {
+      position: relative;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 12px 14px;
-      border-radius: 14px;
+      justify-content: flex-start;
+      padding: 10px 12px;
+      border-radius: 12px;
       background: #fff;
       border: 1px solid rgba(15, 52, 143, 0.12);
       box-shadow: 0 4px 12px rgba(15, 52, 143, 0.08);
-      gap: 12px;
+      gap: 10px;
     }
 
     .player .name {
       flex: 1;
       font-weight: 500;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-right: 28px;
     }
 
     .player-actions {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
       display: inline-flex;
       gap: 6px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .player:hover .player-actions {
+      opacity: 1;
+      pointer-events: auto;
     }
 
     .player button {
       border: none;
-      background: none;
-      color: var(--text-muted);
-      font-size: 1rem;
-      padding: 4px 6px;
+      background: rgba(15, 52, 143, 0.08);
+      color: var(--accent);
+      font-size: 0.85rem;
+      width: 26px;
+      height: 26px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       border-radius: 50%;
     }
 
     .player button:hover {
-      background: rgba(15, 52, 143, 0.08);
-      color: var(--accent);
+      background: rgba(15, 52, 143, 0.18);
+      color: var(--accent-alt);
     }
 
     .composition-card {
@@ -285,7 +307,7 @@
       box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.1);
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
-      grid-auto-rows: minmax(90px, 1fr);
+      grid-auto-rows: minmax(78px, 1fr);
       gap: 12px;
       color: #fff;
     }
@@ -313,13 +335,13 @@
       border-radius: 16px;
       border: 1px solid rgba(255, 255, 255, 0.35);
       background: rgba(12, 75, 38, 0.35);
-      padding: 12px;
+      padding: 12px 12px 16px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
       text-align: center;
-      gap: 8px;
+      gap: 6px;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
@@ -363,39 +385,60 @@
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
 
     .role-slot {
+      position: relative;
       width: 100%;
       border-radius: 12px;
-      border: 1px dashed rgba(255, 255, 255, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.45);
       background: rgba(255, 255, 255, 0.12);
-      padding: 10px;
+      padding: 8px 12px 8px 22px;
       display: flex;
-      flex-direction: column;
-      gap: 6px;
-      align-items: stretch;
-      transition: background 0.2s ease, border-color 0.2s ease;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
       cursor: grab;
     }
 
+    .role-slot::before {
+      content: "";
+      position: absolute;
+      left: 10px;
+      top: 8px;
+      bottom: 8px;
+      width: 4px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.6);
+    }
+
     .role-slot.filled {
-      border-style: solid;
-      border-color: rgba(255, 255, 255, 0.75);
-      background: rgba(255, 255, 255, 0.18);
       cursor: default;
     }
 
-    .role-slot .role-label {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: rgba(255, 255, 255, 0.8);
+    .role-slot.starter {
+      background: rgba(255, 255, 255, 0.24);
+      border-color: rgba(255, 255, 255, 0.85);
+      box-shadow: 0 6px 14px rgba(9, 40, 94, 0.28);
+    }
+
+    .role-slot.starter::before {
+      background: var(--accent-alt);
+    }
+
+    .role-slot.substitute {
+      background: rgba(12, 75, 38, 0.25);
+      border-style: dashed;
+    }
+
+    .role-slot.substitute::before {
+      background: rgba(255, 255, 255, 0.45);
     }
 
     .role-player {
-      min-height: 52px;
+      width: 100%;
       display: flex;
       flex-direction: column;
       gap: 6px;
@@ -405,12 +448,12 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.85rem;
-      color: rgba(255, 255, 255, 0.75);
-      padding: 8px;
+      font-size: 0.82rem;
+      color: rgba(255, 255, 255, 0.78);
+      padding: 6px 8px;
       border-radius: 10px;
       border: 1px dashed rgba(255, 255, 255, 0.45);
-      background: rgba(12, 75, 38, 0.35);
+      background: rgba(12, 75, 38, 0.3);
       pointer-events: none;
     }
 
@@ -428,7 +471,7 @@
 
     @media (max-width: 1024px) {
       .composition-field {
-        grid-auto-rows: minmax(80px, 1fr);
+        grid-auto-rows: minmax(72px, 1fr);
       }
     }
 
@@ -444,7 +487,7 @@
       }
 
       .composition-field {
-        grid-auto-rows: minmax(72px, 1fr);
+        grid-auto-rows: minmax(66px, 1fr);
       }
     }
 
@@ -805,8 +848,8 @@
         starterSlot.dataset.dropTarget = "position";
         starterSlot.dataset.positionId = slot.id;
         starterSlot.dataset.role = "starter";
+        starterSlot.title = "Titulaire";
         starterSlot.innerHTML = `
-          <span class="role-label">Titulaire</span>
           <div class="role-player"></div>
         `;
         const starterContainer = starterSlot.querySelector(".role-player");
@@ -821,8 +864,8 @@
         substituteSlot.dataset.dropTarget = "position";
         substituteSlot.dataset.positionId = slot.id;
         substituteSlot.dataset.role = "substitute";
+        substituteSlot.title = "Remplaçant";
         substituteSlot.innerHTML = `
-          <span class="role-label">Remplaçant</span>
           <div class="role-player"></div>
         `;
         const substituteContainer = substituteSlot.querySelector(".role-player");
