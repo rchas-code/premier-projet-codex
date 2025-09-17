@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Composeur Rugby</title>
+  <title>Gestion des groupes d’entraînement</title>
   <style>
     :root {
       color-scheme: light;
@@ -16,6 +16,11 @@
       --text-muted: #5b6270;
       --slot-max-width: 286px;
       --slot-gap: 18px;
+      --font-scale: 1;
+    }
+
+    html {
+      font-size: calc(16px * var(--font-scale));
     }
 
     * {
@@ -64,6 +69,16 @@
       gap: 12px;
       margin-left: auto;
       justify-content: flex-end;
+    }
+
+    .font-controls {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .font-controls button {
+      min-width: 46px;
     }
 
     .actions button,
@@ -519,6 +534,21 @@
       display: flex;
     }
 
+    .print-only {
+      display: none;
+    }
+
+    .print-only .teams {
+      margin-top: 24px;
+    }
+
+    .print-empty {
+      text-align: center;
+      font-style: italic;
+      color: var(--text-muted);
+      margin: 32px 0;
+    }
+
     @media (max-width: 1080px) {
       :root {
         --slot-max-width: 264px;
@@ -608,6 +638,10 @@
         display: none !important;
       }
 
+      .print-only {
+        display: block !important;
+      }
+
       .composition-card {
         box-shadow: none;
         border: none;
@@ -622,8 +656,12 @@
 <body>
   <div class="page">
     <header>
-      <h1>Composeur de XV de Rugby</h1>
+      <h1>Gestion des groupes d’entraînement</h1>
       <div class="actions editor-only">
+        <div class="font-controls">
+          <button id="font-decrease" class="secondary" type="button" title="Réduire la police">A-</button>
+          <button id="font-increase" class="secondary" type="button" title="Agrandir la police">A+</button>
+        </div>
         <button id="print-btn" class="secondary">Imprimer</button>
         <button id="reset-btn" class="secondary">Réinitialiser</button>
       </div>
@@ -679,6 +717,7 @@
         </div>
       </section>
     </div>
+    <div id="printable-sheets" class="print-only"></div>
   </div>
 
   <script>
@@ -726,9 +765,14 @@
       });
     };
 
+    const FONT_SCALE_MIN = 0.8;
+    const FONT_SCALE_MAX = 1.4;
+    const FONT_SCALE_STEP = 0.1;
+
     const defaultState = () => ({
       pool: [],
       playersText: "",
+      fontScale: 1,
       teams: TEAM_PRESETS.map((team) => ({
         ...team,
         lineup: POSITION_PRESET.map((slot) => ({ ...slot, starter: null, substitute: null }))
@@ -769,6 +813,10 @@
         const base = defaultState();
         base.playersText = typeof raw.playersText === "string" ? raw.playersText : "";
         base.pool = Array.isArray(raw.pool) ? raw.pool.filter(isValidPlayer) : [];
+        if (typeof raw.fontScale === "number") {
+          base.fontScale = clamp(raw.fontScale, FONT_SCALE_MIN, FONT_SCALE_MAX);
+        }
+
         if (Array.isArray(raw.teams)) {
           base.teams = base.teams.map((team) => {
             const savedTeam = raw.teams.find((item) => item.id === team.id);
@@ -796,7 +844,18 @@
       }
     };
 
+    const clamp = (value, min, max) => {
+      return Math.min(Math.max(value, min), max);
+    };
+
     let state = loadState() || defaultState();
+
+    const applyFontScale = () => {
+      const rounded = Math.round(state.fontScale * 100) / 100;
+      document.documentElement.style.setProperty("--font-scale", String(rounded));
+    };
+
+    applyFontScale();
 
     const getAllPlayers = () => {
       const players = [...state.pool];
@@ -909,7 +968,10 @@
     };
 
     const resetState = () => {
+      const currentScale = state.fontScale;
       state = defaultState();
+      state.fontScale = clamp(currentScale, FONT_SCALE_MIN, FONT_SCALE_MAX);
+      applyFontScale();
       render();
       saveState();
     };
@@ -987,8 +1049,6 @@
         const starterContainer = starterSlot.querySelector(".role-player");
         if (slot.starter) {
           starterContainer.appendChild(buildPlayerElement(slot.starter, "position"));
-        } else {
-          starterContainer.innerHTML = '<span class="placeholder">Glisser ici</span>';
         }
 
         const substituteSlot = document.createElement("div");
@@ -1004,8 +1064,6 @@
         const substituteContainer = substituteSlot.querySelector(".role-player");
         if (slot.substitute) {
           substituteContainer.appendChild(buildPlayerElement(slot.substitute, "position"));
-        } else {
-          substituteContainer.innerHTML = '<span class="placeholder">Glisser ici</span>';
         }
 
         container.appendChild(starterSlot);
@@ -1022,6 +1080,49 @@
         }
         renderTeamField(team);
       });
+    };
+
+    const updatePrintableSheets = () => {
+      const container = document.getElementById("printable-sheets");
+      if (!container) return;
+      container.innerHTML = "";
+
+      const printableTeams = state.teams.filter((team) =>
+        team.lineup.some((slot) => slot.starter || slot.substitute)
+      );
+
+      if (printableTeams.length === 0) {
+        return;
+      }
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "teams";
+
+      printableTeams.forEach((team) => {
+        const card = document.querySelector(`.team-card[data-team-id="${team.id}"]`);
+        if (!card) return;
+        const clone = card.cloneNode(true);
+        clone.querySelectorAll(".player-actions").forEach((actions) => actions.remove());
+        clone.querySelectorAll("button").forEach((button) => button.remove());
+        clone.querySelectorAll(".player").forEach((playerEl) => {
+          playerEl.removeAttribute("draggable");
+        });
+        clone.querySelectorAll(".placeholder").forEach((placeholder) => placeholder.remove());
+        wrapper.appendChild(clone);
+      });
+
+      container.appendChild(wrapper);
+    };
+
+    const updateFontButtons = () => {
+      const decreaseBtn = document.getElementById("font-decrease");
+      const increaseBtn = document.getElementById("font-increase");
+      if (decreaseBtn) {
+        decreaseBtn.disabled = state.fontScale <= FONT_SCALE_MIN + 0.001;
+      }
+      if (increaseBtn) {
+        increaseBtn.disabled = state.fontScale >= FONT_SCALE_MAX - 0.001;
+      }
     };
 
     const updateBadges = () => {
@@ -1077,6 +1178,8 @@
       renderPool();
       renderTeams();
       updateBadges();
+      updatePrintableSheets();
+      updateFontButtons();
       attachDnDHandlers();
     };
 
@@ -1114,6 +1217,12 @@
     });
 
     document.getElementById("print-btn").addEventListener("click", () => {
+      updatePrintableSheets();
+      const container = document.getElementById("printable-sheets");
+      if (!container || container.children.length === 0) {
+        alert("Aucune feuille de match à imprimer.");
+        return;
+      }
       window.print();
     });
 
@@ -1121,6 +1230,27 @@
     poolList.addEventListener("dragenter", (event) => {
       event.preventDefault();
     });
+
+    const fontDecreaseBtn = document.getElementById("font-decrease");
+    const fontIncreaseBtn = document.getElementById("font-increase");
+
+    if (fontDecreaseBtn) {
+      fontDecreaseBtn.addEventListener("click", () => {
+        state.fontScale = clamp(state.fontScale - FONT_SCALE_STEP, FONT_SCALE_MIN, FONT_SCALE_MAX);
+        applyFontScale();
+        updateFontButtons();
+        saveState();
+      });
+    }
+
+    if (fontIncreaseBtn) {
+      fontIncreaseBtn.addEventListener("click", () => {
+        state.fontScale = clamp(state.fontScale + FONT_SCALE_STEP, FONT_SCALE_MIN, FONT_SCALE_MAX);
+        applyFontScale();
+        updateFontButtons();
+        saveState();
+      });
+    }
 
     render();
   </script>
