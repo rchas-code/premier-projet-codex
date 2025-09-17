@@ -14,7 +14,7 @@
       --accent: #0b3d91;
       --accent-alt: #00a8e8;
       --text-muted: #5b6270;
-      --slot-max-width: 260px;
+      --slot-max-width: 286px;
       --slot-gap: 18px;
     }
 
@@ -313,7 +313,6 @@
       gap: var(--slot-gap);
       justify-items: center;
       width: 100%;
-      max-width: calc(var(--slot-max-width) * 4 + var(--slot-gap) * 3 + 56px);
       margin: 0 auto;
       color: #fff;
     }
@@ -340,13 +339,13 @@
       position: relative;
       border-radius: 18px;
       border: 1.5px solid transparent;
-      padding: 14px 14px 20px;
+      padding: 12px 14px 16px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
       text-align: center;
-      gap: 8px;
+      gap: 6px;
       transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
       background:
         linear-gradient(162deg, rgba(13, 95, 52, 0.82), rgba(8, 67, 34, 0.6)) padding-box,
@@ -406,7 +405,7 @@
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
 
     .role-slot {
@@ -415,11 +414,11 @@
       border-radius: 12px;
       border: 1px solid rgba(255, 255, 255, 0.45);
       background: rgba(255, 255, 255, 0.12);
-      padding: 8px 12px 8px 22px;
+      padding: 6px 12px 6px 20px;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 48px;
+      min-height: 44px;
       transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
       cursor: grab;
     }
@@ -428,8 +427,8 @@
       content: "";
       position: absolute;
       left: 10px;
-      top: 8px;
-      bottom: 8px;
+      top: 6px;
+      bottom: 6px;
       width: 4px;
       border-radius: 999px;
       background: rgba(255, 255, 255, 0.6);
@@ -492,7 +491,7 @@
 
     @media (max-width: 1080px) {
       :root {
-        --slot-max-width: 240px;
+        --slot-max-width: 264px;
         --slot-gap: 16px;
       }
     }
@@ -505,7 +504,7 @@
 
     @media (max-width: 900px) {
       :root {
-        --slot-max-width: 220px;
+        --slot-max-width: 242px;
         --slot-gap: 14px;
       }
     }
@@ -529,7 +528,7 @@
 
     @media (max-width: 560px) {
       :root {
-        --slot-max-width: 200px;
+        --slot-max-width: 220px;
         --slot-gap: 12px;
       }
     }
