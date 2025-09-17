@@ -105,6 +105,10 @@
       align-self: stretch;
       min-height: 100%;
       border-right: 1px solid var(--border);
+      position: sticky;
+      top: 24px;
+      max-height: calc(100vh - 48px);
+      overflow-y: auto;
     }
 
     .sidebar h2 {
@@ -113,25 +117,23 @@
 
     .sidebar #import-btn {
       align-self: flex-start;
+      border: 1px solid transparent;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-alt));
+      color: #fff;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .sidebar .pool {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      flex: 1;
+    .sidebar #import-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(15, 52, 143, 0.2);
     }
 
-    .sidebar .pool-list {
-      flex: 1;
-    }
-
-    .card {
-      background: var(--card);
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 12px 30px rgba(15, 35, 95, 0.08);
-      border: 1px solid rgba(12, 41, 92, 0.06);
+    .sidebar .subtitle {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.95rem;
     }
 
     textarea {
@@ -144,10 +146,11 @@
       font: inherit;
     }
 
-    .subtitle {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-      margin-bottom: 16px;
+    .pool {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
     }
 
     .pool-list,
@@ -160,53 +163,6 @@
       border-radius: 16px;
       border: 1px dashed var(--border);
       background: #f9fbff;
-    }
-
-    .sidebar {
-      position: sticky;
-      top: 24px;
-      max-height: calc(100vh - 48px);
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .sidebar > div:first-child {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .sidebar .subtitle {
-      margin: 0;
-    }
-
-    .sidebar #import-btn {
-      border: 1px solid transparent;
-      padding: 10px 16px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-alt));
-      color: #fff;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      align-self: flex-start;
-    }
-
-    .sidebar #import-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 18px rgba(15, 52, 143, 0.2);
-    }
-
-    .sidebar .pool {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .sidebar .pool-list {
-      flex: 1;
-      overflow-y: auto;
     }
 
     .pool-list.empty::after,
@@ -235,6 +191,11 @@
       font-weight: 500;
     }
 
+    .player-actions {
+      display: inline-flex;
+      gap: 6px;
+    }
+
     .player button {
       border: none;
       background: none;
@@ -249,29 +210,51 @@
       color: var(--accent);
     }
 
-    .team-card {
+    .composition-card {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 20px;
+      background: var(--card);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 12px 30px rgba(15, 35, 95, 0.08);
+      border: 1px solid rgba(12, 41, 92, 0.06);
     }
 
-    .team-header {
+    .composition-header {
       display: flex;
-      align-items: center;
+      flex-wrap: wrap;
       gap: 12px;
       justify-content: space-between;
+      align-items: center;
     }
 
-    .team-header input {
+    .composition-header h2 {
+      font-size: 1.6rem;
+    }
+
+    .team-name-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .team-name-label {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    #team-name {
       font: inherit;
       font-weight: 600;
       border: none;
       background: transparent;
       padding: 6px 0;
       border-bottom: 2px solid transparent;
+      font-size: clamp(1.2rem, 2vw, 1.5rem);
     }
 
-    .team-header input:focus {
+    #team-name:focus {
       outline: none;
       border-color: var(--accent);
     }
@@ -288,61 +271,116 @@
       font-weight: 600;
     }
 
+    .badge-group {
+      display: inline-flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .composition-field {
+      position: relative;
+      border-radius: 24px;
+      padding: 24px;
+      background: linear-gradient(180deg, #15733b 0%, #0f9d58 60%, #0a7b34 100%);
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.1);
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-auto-rows: minmax(90px, 1fr);
+      gap: 12px;
+      color: #fff;
+    }
+
+    .composition-field::before,
+    .composition-field::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 48px);
+      border-top: 1px dashed rgba(255, 255, 255, 0.35);
+    }
+
+    .composition-field::before {
+      top: 20%;
+    }
+
+    .composition-field::after {
+      bottom: 20%;
+    }
+
+    .position-slot {
+      position: relative;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      background: rgba(12, 75, 38, 0.35);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      text-align: center;
+      gap: 8px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .position-slot:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.16);
+    }
+
+    .position-slot.filled {
+      background: rgba(12, 75, 38, 0.55);
+    }
+
+    .position-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.85);
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .position-label {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.85);
+      min-height: 34px;
+    }
+
+    .position-player {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .position-slot .player {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      color: var(--accent);
+      border: none;
+      box-shadow: none;
+    }
+
+    .composition-bench {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .composition-bench .list {
+      background: rgba(11, 61, 145, 0.04);
+    }
+
     .list-title {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 8px;
-    }
-
-    .tv-wrapper {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 16px;
-    }
-
-    .tv-card {
-      border-radius: 24px;
-      padding: 24px;
-      color: #fff;
-      background: linear-gradient(140deg, #0b3d91, #144fc1 40%, #21a8f5 95%);
-      box-shadow: 0 18px 40px rgba(11, 61, 145, 0.4);
-    }
-
-    .tv-card h3 {
-      font-size: 1.4rem;
-      margin-bottom: 16px;
-    }
-
-    .tv-team {
-      margin-bottom: 16px;
-      padding: 12px;
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.12);
-    }
-
-    .tv-team:last-child {
-      margin-bottom: 0;
-    }
-
-    .tv-team h4 {
-      font-size: 1.1rem;
-      margin-bottom: 8px;
-    }
-
-    .tv-lineup {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 8px;
-    }
-
-    .pill {
-      display: inline-flex;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(4px);
-      font-size: 0.85rem;
     }
 
     .editor-only {
@@ -357,6 +395,12 @@
       display: flex;
     }
 
+    @media (max-width: 1024px) {
+      .composition-field {
+        grid-auto-rows: minmax(80px, 1fr);
+      }
+    }
+
     @media (max-width: 720px) {
       .layout {
         grid-template-columns: 1fr;
@@ -368,16 +412,8 @@
         overflow: visible;
       }
 
-      .sidebar .pool {
-        flex: initial;
-      }
-
-      .sidebar .pool-list {
-        max-height: none;
-      }
-
-      .sidebar #import-btn {
-        width: 100%;
+      .composition-field {
+        grid-auto-rows: minmax(72px, 1fr);
       }
     }
 
@@ -397,15 +433,12 @@
       }
 
       .sidebar #import-btn {
+        width: 100%;
         margin-top: 8px;
       }
     }
 
     @media (max-width: 480px) {
-      .tv-lineup {
-        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-      }
-
       .player {
         flex-direction: column;
         align-items: flex-start;
@@ -414,30 +447,28 @@
       .player button {
         align-self: flex-end;
       }
+      .composition-field {
+        padding: 18px;
+      }
     }
 
     @media print {
       body {
-        background: #000;
+        background: #fff;
       }
 
       header,
-      .layout,
       .editor-only {
         display: none !important;
       }
 
-      .tv-wrapper {
-        display: grid;
-        gap: 24px;
-        grid-template-columns: 1fr;
-        page-break-inside: avoid;
+      .composition-card {
+        box-shadow: none;
+        border: none;
       }
 
-      .tv-card {
-        -webkit-print-color-adjust: exact;
-        color-adjust: exact;
-        page-break-inside: avoid;
+      .composition-field {
+        color: #000;
       }
     }
   </style>
@@ -467,25 +498,29 @@
           <div id="pool-list" class="pool-list" data-drop-target="pool" data-empty-label="Aucun joueur">
           </div>
         </div>
-      </aside>
+      </section>
 
-      <section class="card">
-        <div class="team-header" style="margin-bottom: 12px;">
-          <h2>Équipes</h2>
-          <button id="add-team-btn" class="secondary" style="padding: 6px 12px; border-radius: 10px; border: 1px solid var(--border);">+ Ajouter une équipe</button>
+      <section class="composition-card">
+        <div class="composition-header">
+          <div class="team-name-wrapper">
+            <span class="team-name-label">Nom de l'équipe</span>
+            <input type="text" id="team-name" value="Équipe" />
+          </div>
+          <div class="badge-group">
+            <span class="badge" id="starters-count">Tit. 0 / 15</span>
+            <span class="badge" id="bench-count">Remp. 0</span>
+          </div>
         </div>
-        <div id="teams-wrapper" class="teams"></div>
+        <div class="composition-field" id="composition-field"></div>
+        <div class="composition-bench">
+          <div class="list-title">
+            <h3>Remplaçants</h3>
+            <span class="badge" id="bench-count-inline">0</span>
+          </div>
+          <div class="list" id="bench-list" data-drop-target="bench" data-empty-label="Glisser ici"></div>
+        </div>
       </section>
     </div>
-
-    <section class="tv-wrapper">
-      <article class="tv-card" id="tv-starters">
-        <h3>Vue TV — Titulaires</h3>
-      </article>
-      <article class="tv-card" id="tv-bench">
-        <h3>Vue TV — Remplaçants</h3>
-      </article>
-    </section>
   </div>
 
   <script>
@@ -496,17 +531,30 @@
       return () => `p_${Date.now().toString(36)}_${(inc++).toString(36)}`;
     })();
 
+    const POSITION_PRESET = [
+      { id: "pos-1", number: "1", label: "Pilier gauche", row: 1, col: 1 },
+      { id: "pos-2", number: "2", label: "Talonneur", row: 1, col: 3 },
+      { id: "pos-3", number: "3", label: "Pilier droit", row: 1, col: 5 },
+      { id: "pos-4", number: "4", label: "Deuxième ligne", row: 2, col: 2 },
+      { id: "pos-5", number: "5", label: "Deuxième ligne", row: 2, col: 4 },
+      { id: "pos-6", number: "6", label: "Troisième ligne aile", row: 3, col: 1 },
+      { id: "pos-7", number: "7", label: "Troisième ligne aile", row: 3, col: 5 },
+      { id: "pos-8", number: "8", label: "Troisième ligne centre", row: 3, col: 3 },
+      { id: "pos-9", number: "9", label: "Demi de mêlée", row: 4, col: 2 },
+      { id: "pos-10", number: "10", label: "Demi d'ouverture", row: 4, col: 4 },
+      { id: "pos-11", number: "11", label: "Ailier gauche", row: 5, col: 1 },
+      { id: "pos-12", number: "12", label: "Centre intérieur", row: 5, col: 2 },
+      { id: "pos-13", number: "13", label: "Centre extérieur", row: 5, col: 4 },
+      { id: "pos-14", number: "14", label: "Ailier droit", row: 5, col: 5 },
+      { id: "pos-15", number: "15", label: "Arrière", row: 6, col: 3 }
+    ];
+
     const defaultState = () => ({
       pool: [],
-      teams: [
-        {
-          id: uid(),
-          name: "Équipe 1",
-          starters: [],
-          bench: []
-        }
-      ],
-      playersText: ""
+      bench: [],
+      lineup: POSITION_PRESET.map((slot) => ({ ...slot, player: null })),
+      playersText: "",
+      teamName: "Équipe"
     });
 
     const escapeHTML = (value) => {
@@ -528,164 +576,137 @@
       });
     };
 
-    const parseNames = (raw) => {
-      if (!raw) return [];
-      return raw
-        .split(/[\n;,]+/)
-        .map((name) => name.trim())
-        .filter((name) => name.length > 0);
+    const isValidPlayer = (player) => {
+      return player && typeof player.id === "string" && typeof player.name === "string";
     };
 
     const saveState = () => {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      } catch (err) {
-        console.warn("Impossible d'enregistrer l'état", err);
-      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     };
 
     const loadState = () => {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY);
+        const raw = JSON.parse(localStorage.getItem(STORAGE_KEY));
         if (!raw) return null;
-        const parsed = JSON.parse(raw);
-        if (!parsed || typeof parsed !== "object") return null;
-        return {
-          pool: Array.isArray(parsed.pool) ? parsed.pool : [],
-          teams: Array.isArray(parsed.teams)
-            ? parsed.teams.map((team) => ({
-                id: team.id || uid(),
-                name: team.name || "Équipe",
-                starters: Array.isArray(team.starters) ? team.starters : [],
-                bench: Array.isArray(team.bench) ? team.bench : []
-              }))
-            : defaultState().teams,
-          playersText: typeof parsed.playersText === "string" ? parsed.playersText : ""
-        };
-      } catch (err) {
-        console.warn("Impossible de charger l'état", err);
+        const base = defaultState();
+        base.playersText = typeof raw.playersText === "string" ? raw.playersText : "";
+        base.teamName = typeof raw.teamName === "string" && raw.teamName.trim() ? raw.teamName : base.teamName;
+        base.pool = Array.isArray(raw.pool) ? raw.pool.filter(isValidPlayer) : [];
+        base.bench = Array.isArray(raw.bench) ? raw.bench.filter(isValidPlayer) : [];
+        base.lineup = POSITION_PRESET.map((slot) => {
+          const saved = Array.isArray(raw.lineup) ? raw.lineup.find((item) => item.id === slot.id) : null;
+          const player = saved && isValidPlayer(saved.player) ? saved.player : null;
+          return { ...slot, player };
+        });
+        return base;
+      } catch (error) {
+        console.error("Impossible de charger l'état", error);
         return null;
       }
     };
 
-    const findLocation = (playerId) => {
-      const poolIndex = state.pool.findIndex((p) => p.id === playerId);
-      if (poolIndex !== -1) {
-        return { type: "pool", index: poolIndex };
-      }
-      for (let t = 0; t < state.teams.length; t++) {
-        const team = state.teams[t];
-        const starterIndex = team.starters.findIndex((p) => p.id === playerId);
-        if (starterIndex !== -1) {
-          return { type: "starter", teamIndex: t, index: starterIndex };
+    let state = loadState() || defaultState();
+
+    const getAllPlayers = () => {
+      const players = [...state.pool, ...state.bench];
+      state.lineup.forEach((slot) => {
+        if (slot.player) {
+          players.push(slot.player);
         }
-        const benchIndex = team.bench.findIndex((p) => p.id === playerId);
-        if (benchIndex !== -1) {
-          return { type: "bench", teamIndex: t, index: benchIndex };
-        }
-      }
-      return null;
+      });
+      return players;
     };
 
-    const removeFromLocation = (location) => {
-      if (!location) return null;
-      if (location.type === "pool") {
-        return state.pool.splice(location.index, 1)[0] || null;
-      }
-      if (location.type === "starter") {
-        return state.teams[location.teamIndex].starters.splice(location.index, 1)[0] || null;
-      }
-      if (location.type === "bench") {
-        return state.teams[location.teamIndex].bench.splice(location.index, 1)[0] || null;
-      }
-      return null;
+    const playerExists = (name) => {
+      return getAllPlayers().some((player) => player.name.toLowerCase() === name.toLowerCase());
+    };
+
+    const importPlayers = () => {
+      const textarea = document.getElementById("import-input");
+      const value = textarea.value;
+      state.playersText = value;
+      const names = value
+        .split(/[\n,;]+/)
+        .map((name) => name.trim())
+        .filter((name) => name.length > 0);
+      names.forEach((name) => {
+        if (!playerExists(name)) {
+          state.pool.push({ id: uid(), name });
+        }
+      });
+      state.pool.sort((a, b) => a.name.localeCompare(b.name, "fr"));
+      render();
+      saveState();
+    };
+
+    const takePlayer = (playerId) => {
+      let player = null;
+      const extractFrom = (list) => {
+        const index = list.findIndex((item) => item.id === playerId);
+        if (index !== -1) {
+          player = list.splice(index, 1)[0];
+        }
+      };
+      extractFrom(state.pool);
+      extractFrom(state.bench);
+      state.lineup.forEach((slot) => {
+        if (slot.player && slot.player.id === playerId) {
+          player = slot.player;
+          slot.player = null;
+        }
+      });
+      return player;
     };
 
     const moveToPool = (playerId) => {
-      const location = findLocation(playerId);
-      const player = removeFromLocation(location);
+      const player = takePlayer(playerId);
       if (!player) return;
-      const exists = state.pool.some((p) => p.id === player.id);
-      if (!exists) {
+      if (!state.pool.some((item) => item.id === player.id)) {
         state.pool.push(player);
         state.pool.sort((a, b) => a.name.localeCompare(b.name, "fr"));
       }
     };
 
-    const placeStarter = (playerId, teamId) => {
-      const team = state.teams.find((t) => t.id === teamId);
-      if (!team) return;
-      const location = findLocation(playerId);
-      const player = removeFromLocation(location);
+    const placeOnBench = (playerId) => {
+      const player = takePlayer(playerId);
       if (!player) return;
-      const already = team.starters.some((p) => p.id === player.id);
-      if (!already) {
-        team.starters.push(player);
+      if (!state.bench.some((item) => item.id === player.id)) {
+        state.bench.push(player);
       }
     };
 
-    const placeBench = (playerId, teamId) => {
-      const team = state.teams.find((t) => t.id === teamId);
-      if (!team) return;
-      const location = findLocation(playerId);
-      const player = removeFromLocation(location);
-      if (!player) return;
-      const already = team.bench.some((p) => p.id === player.id);
-      if (!already) {
-        team.bench.push(player);
+    const placeInPosition = (playerId, positionId) => {
+      const slot = state.lineup.find((item) => item.id === positionId);
+      if (!slot) return;
+      const incoming = takePlayer(playerId);
+      if (!incoming) return;
+      if (slot.player && slot.player.id !== incoming.id) {
+        const previous = slot.player;
+        slot.player = null;
+        if (!state.pool.some((item) => item.id === previous.id)) {
+          state.pool.push(previous);
+          state.pool.sort((a, b) => a.name.localeCompare(b.name, "fr"));
+        }
       }
-    };
-
-    const importPlayers = () => {
-      const names = parseNames(state.playersText);
-      if (!names.length) return;
-      const canonical = new Set();
-      state.pool.forEach((player) => canonical.add(player.name.toLowerCase()));
-      state.teams.forEach((team) => {
-        team.starters.forEach((player) => canonical.add(player.name.toLowerCase()));
-        team.bench.forEach((player) => canonical.add(player.name.toLowerCase()));
-      });
-      names.forEach((name) => {
-        const key = name.toLowerCase();
-        if (canonical.has(key)) return;
-        canonical.add(key);
-        state.pool.push({ id: uid(), name });
-      });
-      state.pool.sort((a, b) => a.name.localeCompare(b.name, "fr"));
-      state.playersText = "";
-      render();
-      saveState();
+      slot.player = incoming;
     };
 
     const deletePlayer = (playerId) => {
-      const location = findLocation(playerId);
-      removeFromLocation(location);
-      render();
-      saveState();
-    };
-
-    const addTeam = () => {
-      const nextIndex = state.teams.length + 1;
-      state.teams.push({ id: uid(), name: `Équipe ${nextIndex}`, starters: [], bench: [] });
-      render();
-      saveState();
-    };
-
-    const removeTeam = (teamId) => {
-      if (state.teams.length <= 1) return;
-      const index = state.teams.findIndex((team) => team.id === teamId);
-      if (index === -1) return;
-      const team = state.teams[index];
-      [...team.starters, ...team.bench].forEach((player) => {
-        const exists = state.pool.some((p) => p.id === player.id);
-        if (!exists) {
-          state.pool.push(player);
+      const removeFrom = (list) => {
+        const index = list.findIndex((player) => player.id === playerId);
+        if (index !== -1) {
+          list.splice(index, 1);
+          return true;
+        }
+        return false;
+      };
+      if (removeFrom(state.pool)) return;
+      if (removeFrom(state.bench)) return;
+      state.lineup.forEach((slot) => {
+        if (slot.player && slot.player.id === playerId) {
+          slot.player = null;
         }
       });
-      state.pool.sort((a, b) => a.name.localeCompare(b.name, "fr"));
-      state.teams.splice(index, 1);
-      render();
-      saveState();
     };
 
     const resetState = () => {
@@ -693,8 +714,6 @@
       render();
       saveState();
     };
-
-    let state = loadState() || defaultState();
 
     const buildPlayerElement = (player, context) => {
       const item = document.createElement("div");
@@ -704,52 +723,25 @@
       const safeName = escapeHTML(player.name);
       item.innerHTML = `
         <span class="name">${safeName}</span>
-        <div class="player-actions">
-          ${context !== "pool" ? '<button type="button" data-action="send-to-pool" title="Retour pool">↩</button>' : ""}
-          <button type="button" data-action="delete-player" title="Supprimer" aria-label="Supprimer" data-context="${context}">✕</button>
-        </div>
+        <div class="player-actions"></div>
       `;
+      const actions = item.querySelector(".player-actions");
+      if (context === "pool") {
+        const deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.dataset.action = "delete-player";
+        deleteBtn.title = "Supprimer";
+        deleteBtn.textContent = "✕";
+        actions.appendChild(deleteBtn);
+      } else {
+        const backBtn = document.createElement("button");
+        backBtn.type = "button";
+        backBtn.dataset.action = "send-to-pool";
+        backBtn.title = "Retour au pool";
+        backBtn.textContent = "↩";
+        actions.appendChild(backBtn);
+      }
       return item;
-    };
-
-    const renderTeams = () => {
-      const wrapper = document.getElementById("teams-wrapper");
-      wrapper.innerHTML = "";
-      state.teams.forEach((team) => {
-        const card = document.createElement("article");
-        card.className = "team-card card";
-        const safeName = escapeHTML(team.name);
-        card.innerHTML = `
-          <div class="team-header">
-            <input type="text" value="${safeName}" data-team-id="${team.id}" class="team-name" />
-            <span class="badge">Tit. ${team.starters.length} · Remp. ${team.bench.length}</span>
-            <button type="button" class="secondary" data-action="delete-team" data-team-id="${team.id}" title="Supprimer l'équipe" style="border-radius: 10px; border: 1px solid var(--border); padding: 6px 10px;">✕</button>
-          </div>
-          <div class="list-block">
-            <div class="list-title">
-              <h3>Titulaires</h3>
-              <span class="badge">${team.starters.length}</span>
-            </div>
-            <div class="list ${team.starters.length === 0 ? "empty" : ""}" data-empty-label="Glisser ici" data-drop-target="starter" data-team-id="${team.id}"></div>
-          </div>
-          <div class="list-block">
-            <div class="list-title">
-              <h3>Remplaçants</h3>
-              <span class="badge">${team.bench.length}</span>
-            </div>
-            <div class="list ${team.bench.length === 0 ? "empty" : ""}" data-empty-label="Glisser ici" data-drop-target="bench" data-team-id="${team.id}"></div>
-          </div>
-        `;
-        wrapper.appendChild(card);
-        const startersContainer = card.querySelector('[data-drop-target="starter"]');
-        team.starters.forEach((player) => {
-          startersContainer.appendChild(buildPlayerElement(player, "starter"));
-        });
-        const benchContainer = card.querySelector('[data-drop-target="bench"]');
-        team.bench.forEach((player) => {
-          benchContainer.appendChild(buildPlayerElement(player, "bench"));
-        });
-      });
     };
 
     const renderPool = () => {
@@ -761,63 +753,52 @@
         pool.classList.remove("empty");
       }
       state.pool.forEach((player) => {
-        const item = buildPlayerElement(player, "pool");
-        pool.appendChild(item);
+        pool.appendChild(buildPlayerElement(player, "pool"));
       });
     };
 
-    const renderTV = () => {
-      const startersView = document.getElementById("tv-starters");
-      const benchView = document.getElementById("tv-bench");
-      const startersContent = document.createElement("div");
-      const benchContent = document.createElement("div");
-      startersContent.className = "tv-content";
-      benchContent.className = "tv-content";
-      state.teams.forEach((team) => {
-        const startersBlock = document.createElement("div");
-        startersBlock.className = "tv-team";
-        startersBlock.innerHTML = `<h4>${escapeHTML(team.name)}</h4>`;
-        const startersList = document.createElement("div");
-        startersList.className = "tv-lineup";
-        team.starters.forEach((player, index) => {
-          const pill = document.createElement("span");
-          pill.className = "pill";
-          pill.textContent = `${String(index + 1).padStart(2, "0")} — ${player.name}`;
-          startersList.appendChild(pill);
-        });
-        if (!team.starters.length) {
-          const empty = document.createElement("span");
-          empty.className = "pill";
-          empty.textContent = "Aucun titulaire";
-          startersList.appendChild(empty);
-        }
-        startersBlock.appendChild(startersList);
-        startersContent.appendChild(startersBlock);
-
-        const benchBlock = document.createElement("div");
-        benchBlock.className = "tv-team";
-        benchBlock.innerHTML = `<h4>${escapeHTML(team.name)}</h4>`;
-        const benchList = document.createElement("div");
-        benchList.className = "tv-lineup";
-        team.bench.forEach((player, index) => {
-          const pill = document.createElement("span");
-          pill.className = "pill";
-          pill.textContent = `${String(index + 1).padStart(2, "0")} — ${player.name}`;
-          benchList.appendChild(pill);
-        });
-        if (!team.bench.length) {
-          const empty = document.createElement("span");
-          empty.className = "pill";
-          empty.textContent = "Aucun remplaçant";
-          benchList.appendChild(empty);
-        }
-        benchBlock.appendChild(benchList);
-        benchContent.appendChild(benchBlock);
+    const renderBench = () => {
+      const bench = document.getElementById("bench-list");
+      bench.innerHTML = "";
+      if (state.bench.length === 0) {
+        bench.classList.add("empty");
+      } else {
+        bench.classList.remove("empty");
+      }
+      state.bench.forEach((player) => {
+        bench.appendChild(buildPlayerElement(player, "bench"));
       });
-      startersView.querySelectorAll(".tv-content").forEach((el) => el.remove());
-      startersView.appendChild(startersContent);
-      benchView.querySelectorAll(".tv-content").forEach((el) => el.remove());
-      benchView.appendChild(benchContent);
+    };
+
+    const renderLineup = () => {
+      const field = document.getElementById("composition-field");
+      field.innerHTML = "";
+      state.lineup.forEach((slot) => {
+        const slotEl = document.createElement("div");
+        slotEl.className = `position-slot${slot.player ? " filled" : ""}`;
+        slotEl.dataset.dropTarget = "position";
+        slotEl.dataset.positionId = slot.id;
+        slotEl.style.gridRow = slot.row;
+        slotEl.style.gridColumn = slot.col;
+        slotEl.innerHTML = `
+          <span class="position-number">${slot.number}</span>
+          <span class="position-label">${slot.label}</span>
+          <div class="position-player"></div>
+        `;
+        if (slot.player) {
+          const container = slotEl.querySelector(".position-player");
+          const playerEl = buildPlayerElement(slot.player, "position");
+          container.appendChild(playerEl);
+        }
+        field.appendChild(slotEl);
+      });
+    };
+
+    const updateBadges = () => {
+      const startersCount = state.lineup.filter((slot) => !!slot.player).length;
+      document.getElementById("starters-count").textContent = `Tit. ${startersCount} / 15`;
+      document.getElementById("bench-count").textContent = `Remp. ${state.bench.length}`;
+      document.getElementById("bench-count-inline").textContent = state.bench.length;
     };
 
     const attachDnDHandlers = () => {
@@ -841,10 +822,10 @@
           if (!playerId || !target) return;
           if (target === "pool") {
             moveToPool(playerId);
-          } else if (target === "starter") {
-            placeStarter(playerId, zone.dataset.teamId);
           } else if (target === "bench") {
-            placeBench(playerId, zone.dataset.teamId);
+            placeOnBench(playerId);
+          } else if (target === "position") {
+            placeInPosition(playerId, zone.dataset.positionId);
           }
           render();
           saveState();
@@ -857,9 +838,14 @@
       if (document.activeElement !== textarea) {
         textarea.value = state.playersText;
       }
+      const teamNameInput = document.getElementById("team-name");
+      if (document.activeElement !== teamNameInput) {
+        teamNameInput.value = state.teamName;
+      }
       renderPool();
-      renderTeams();
-      renderTV();
+      renderBench();
+      renderLineup();
+      updateBadges();
       attachDnDHandlers();
     };
 
@@ -867,48 +853,31 @@
       if (event.target.id === "import-input") {
         state.playersText = event.target.value;
       }
-      if (event.target.classList.contains("team-name")) {
-        const teamId = event.target.dataset.teamId;
-        const team = state.teams.find((t) => t.id === teamId);
-        if (team) {
-          team.name = event.target.value.trim() || "Équipe";
-          renderTV();
-          saveState();
-        }
+      if (event.target.id === "team-name") {
+        state.teamName = event.target.value.trim() || "Équipe";
+        saveState();
       }
     });
 
     document.addEventListener("click", (event) => {
       const action = event.target.dataset.action;
       if (!action) return;
+      const playerEl = event.target.closest(".player");
+      if (!playerEl) return;
+      const playerId = playerEl.dataset.playerId;
+      if (!playerId) return;
       if (action === "delete-player") {
-        const playerId = event.target.closest(".player").dataset.playerId;
-        if (event.target.dataset.context === "pool") {
-          deletePlayer(playerId);
-        } else {
-          moveToPool(playerId);
-          render();
-          saveState();
-        }
+        deletePlayer(playerId);
       }
       if (action === "send-to-pool") {
-        const playerId = event.target.closest(".player").dataset.playerId;
         moveToPool(playerId);
-        render();
-        saveState();
       }
-      if (action === "delete-team") {
-        const teamId = event.target.dataset.teamId;
-        removeTeam(teamId);
-      }
+      render();
+      saveState();
     });
 
     document.getElementById("import-btn").addEventListener("click", () => {
       importPlayers();
-    });
-
-    document.getElementById("add-team-btn").addEventListener("click", () => {
-      addTeam();
     });
 
     document.getElementById("save-btn").addEventListener("click", () => {
