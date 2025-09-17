@@ -262,8 +262,8 @@
 
     .player button {
       border: none;
-      background: rgba(15, 52, 143, 0.1);
-      color: var(--accent);
+      background: var(--accent);
+      color: #fff;
       font-size: 0.85rem;
       width: 26px;
       height: 26px;
@@ -272,11 +272,12 @@
       justify-content: center;
       border-radius: 50%;
       box-shadow: none;
+      transition: background 0.18s ease, color 0.18s ease;
     }
 
     .player button:hover {
-      background: rgba(0, 168, 232, 0.2);
-      color: var(--accent-alt);
+      background: var(--accent-alt);
+      color: #fff;
     }
 
     .teams {
@@ -297,95 +298,103 @@
     }
 
     .team-card {
-      --team-field-bg: linear-gradient(160deg, #0a5c2f 0%, #119d4f 55%, #2ecb6c 100%);
-      --team-field-text: #f5fbf8;
-      --team-slot-bg: linear-gradient(150deg, rgba(47, 203, 108, 0.85) 0%, rgba(9, 94, 47, 0.2) 100%);
-      --team-slot-bg-filled: linear-gradient(150deg, rgba(62, 219, 121, 0.95) 0%, rgba(6, 67, 33, 0.28) 100%);
-      --team-slot-shadow: 0 24px 36px rgba(7, 58, 30, 0.35);
-      --team-slot-text: #f5fbf8;
-      --team-number-bg: rgba(245, 251, 248, 0.92);
-      --team-number-text: #0c3c1f;
-      --team-badge-bg: rgba(245, 251, 248, 0.22);
-      --team-badge-text: #f5fbf8;
-      --team-placeholder-bg: rgba(245, 251, 248, 0.18);
-      --team-placeholder-text: rgba(245, 251, 248, 0.78);
-      --team-role-bg: linear-gradient(145deg, rgba(47, 203, 108, 0.38) 0%, rgba(9, 94, 47, 0.08) 100%);
-      --team-role-bg-filled: linear-gradient(145deg, rgba(47, 203, 108, 0.5) 0%, rgba(9, 94, 47, 0.18) 100%);
-      --team-role-shadow: 0 16px 32px rgba(7, 58, 30, 0.32);
-      --team-role-shadow-soft: 0 10px 18px rgba(7, 58, 30, 0.22);
-      --team-action-bg: rgba(245, 251, 248, 0.24);
-      --team-action-bg-hover: rgba(245, 251, 248, 0.38);
-      --team-action-text: #f5fbf8;
-      --team-player-gradient: linear-gradient(135deg, rgba(47, 203, 108, 0.3) 0%, rgba(9, 94, 47, 0) 100%);
+      --team-field-bg: #e3e5e9;
+      --team-field-text: #1f2227;
+      --team-slot-bg: #5d636b;
+      --team-slot-text: #f4f5f7;
+      --team-slot-bg-filled: #5d636b;
+      --team-number-bg: #f4f5f7;
+      --team-number-text: #2f333a;
+      --team-badge-bg: rgba(255, 255, 255, 0.18);
+      --team-badge-text: #1f2227;
+      --team-placeholder-bg: rgba(255, 255, 255, 0.42);
+      --team-placeholder-text: rgba(47, 51, 58, 0.65);
+      --team-role-bg: #f6f7f9;
+      --team-role-bg-filled: #eceef1;
+      --team-role-shadow: 0 8px 18px rgba(52, 56, 63, 0.16);
+      --team-role-shadow-soft: 0 4px 10px rgba(52, 56, 63, 0.14);
+      --team-role-text: #1f2227;
+      --team-action-bg: #444a52;
+      --team-action-bg-hover: #5a6069;
+      --team-action-text: #f7f8f9;
+      --team-player-bg: #f6f7f9;
+      --team-player-text: #1f2227;
+      --team-player-cover: rgba(227, 229, 233, 0.86);
     }
 
     .team-card[data-team-id="blue"] {
-      --team-field-bg: linear-gradient(160deg, #0b2f83 0%, #0e4eb5 50%, #1284ff 100%);
-      --team-field-text: #f2f7ff;
-      --team-slot-bg: linear-gradient(150deg, rgba(18, 87, 192, 0.88) 0%, rgba(10, 58, 140, 0.18) 100%);
-      --team-slot-bg-filled: linear-gradient(150deg, rgba(31, 121, 247, 0.95) 0%, rgba(6, 45, 116, 0.26) 100%);
-      --team-slot-shadow: 0 24px 40px rgba(4, 27, 73, 0.45);
-      --team-slot-text: #f2f7ff;
-      --team-number-bg: rgba(241, 247, 255, 0.94);
-      --team-number-text: #0b2f83;
-      --team-badge-bg: rgba(24, 117, 239, 0.35);
-      --team-badge-text: #e7f1ff;
-      --team-placeholder-bg: rgba(241, 247, 255, 0.16);
-      --team-placeholder-text: rgba(231, 241, 255, 0.78);
-      --team-role-bg: linear-gradient(145deg, rgba(24, 117, 239, 0.42) 0%, rgba(10, 58, 140, 0.1) 100%);
-      --team-role-bg-filled: linear-gradient(145deg, rgba(24, 117, 239, 0.55) 0%, rgba(6, 45, 116, 0.18) 100%);
-      --team-role-shadow: 0 18px 34px rgba(4, 27, 73, 0.38);
-      --team-role-shadow-soft: 0 12px 22px rgba(4, 27, 73, 0.26);
-      --team-action-bg: rgba(241, 247, 255, 0.22);
-      --team-action-bg-hover: rgba(241, 247, 255, 0.34);
-      --team-action-text: #f2f7ff;
-      --team-player-gradient: linear-gradient(135deg, rgba(31, 121, 247, 0.36) 0%, rgba(6, 45, 116, 0) 100%);
+      --team-field-bg: #dce7ff;
+      --team-field-text: #0f264f;
+      --team-slot-bg: #1f4ea8;
+      --team-slot-text: #f4f8ff;
+      --team-slot-bg-filled: #1f4ea8;
+      --team-number-bg: #f4f8ff;
+      --team-number-text: #103476;
+      --team-badge-bg: rgba(15, 62, 162, 0.18);
+      --team-badge-text: #0f264f;
+      --team-placeholder-bg: rgba(255, 255, 255, 0.5);
+      --team-placeholder-text: rgba(16, 52, 118, 0.7);
+      --team-role-bg: #f6f9ff;
+      --team-role-bg-filled: #e8f0ff;
+      --team-role-shadow: 0 8px 18px rgba(15, 62, 162, 0.2);
+      --team-role-shadow-soft: 0 4px 10px rgba(15, 62, 162, 0.16);
+      --team-role-text: #0f264f;
+      --team-action-bg: #0f3ea2;
+      --team-action-bg-hover: #1254cf;
+      --team-action-text: #f4f8ff;
+      --team-player-bg: #f6f9ff;
+      --team-player-text: #0f264f;
+      --team-player-cover: rgba(220, 231, 255, 0.9);
     }
 
     .team-card[data-team-id="green"] {
-      --team-field-bg: linear-gradient(160deg, #0a5c2f 0%, #119d4f 55%, #2ecb6c 100%);
-      --team-field-text: #f5fbf8;
-      --team-slot-bg: linear-gradient(150deg, rgba(47, 203, 108, 0.85) 0%, rgba(9, 94, 47, 0.2) 100%);
-      --team-slot-bg-filled: linear-gradient(150deg, rgba(62, 219, 121, 0.95) 0%, rgba(6, 67, 33, 0.28) 100%);
-      --team-slot-shadow: 0 24px 36px rgba(7, 58, 30, 0.35);
+      --team-field-bg: #dff4e8;
+      --team-field-text: #0d3a21;
+      --team-slot-bg: #1f7a3b;
       --team-slot-text: #f5fbf8;
-      --team-number-bg: rgba(245, 251, 248, 0.92);
-      --team-number-text: #0c3c1f;
-      --team-badge-bg: rgba(34, 197, 94, 0.32);
-      --team-badge-text: #edfff5;
-      --team-placeholder-bg: rgba(245, 251, 248, 0.18);
-      --team-placeholder-text: rgba(245, 251, 248, 0.78);
-      --team-role-bg: linear-gradient(145deg, rgba(47, 203, 108, 0.38) 0%, rgba(9, 94, 47, 0.08) 100%);
-      --team-role-bg-filled: linear-gradient(145deg, rgba(47, 203, 108, 0.52) 0%, rgba(9, 94, 47, 0.18) 100%);
-      --team-role-shadow: 0 16px 30px rgba(7, 58, 30, 0.32);
-      --team-role-shadow-soft: 0 10px 18px rgba(7, 58, 30, 0.22);
-      --team-action-bg: rgba(245, 251, 248, 0.24);
-      --team-action-bg-hover: rgba(245, 251, 248, 0.36);
+      --team-slot-bg-filled: #1f7a3b;
+      --team-number-bg: #f5fbf8;
+      --team-number-text: #0d3a21;
+      --team-badge-bg: rgba(23, 122, 59, 0.2);
+      --team-badge-text: #0d3a21;
+      --team-placeholder-bg: rgba(255, 255, 255, 0.48);
+      --team-placeholder-text: rgba(13, 58, 33, 0.68);
+      --team-role-bg: #f2fbf5;
+      --team-role-bg-filled: #e6f6eb;
+      --team-role-shadow: 0 8px 18px rgba(23, 122, 59, 0.18);
+      --team-role-shadow-soft: 0 4px 10px rgba(23, 122, 59, 0.14);
+      --team-role-text: #0d3a21;
+      --team-action-bg: #1a6a34;
+      --team-action-bg-hover: #218e43;
       --team-action-text: #f5fbf8;
-      --team-player-gradient: linear-gradient(135deg, rgba(47, 203, 108, 0.3) 0%, rgba(9, 94, 47, 0) 100%);
+      --team-player-bg: #f2fbf5;
+      --team-player-text: #0d3a21;
+      --team-player-cover: rgba(223, 244, 232, 0.9);
     }
 
     .team-card[data-team-id="neutral"] {
-      --team-field-bg: linear-gradient(160deg, #4b4f57 0%, #5f6368 55%, #8a9199 100%);
-      --team-field-text: #f4f5f7;
-      --team-slot-bg: linear-gradient(150deg, rgba(118, 125, 135, 0.88) 0%, rgba(76, 81, 89, 0.2) 100%);
-      --team-slot-bg-filled: linear-gradient(150deg, rgba(147, 154, 165, 0.95) 0%, rgba(67, 72, 80, 0.26) 100%);
-      --team-slot-shadow: 0 24px 38px rgba(32, 35, 40, 0.38);
+      --team-field-bg: #e3e5e9;
+      --team-field-text: #1f2227;
+      --team-slot-bg: #5d636b;
       --team-slot-text: #f4f5f7;
-      --team-number-bg: rgba(246, 247, 249, 0.92);
-      --team-number-text: #2d3138;
-      --team-badge-bg: rgba(244, 245, 247, 0.2);
-      --team-badge-text: #f4f5f7;
-      --team-placeholder-bg: rgba(244, 245, 247, 0.18);
-      --team-placeholder-text: rgba(244, 245, 247, 0.78);
-      --team-role-bg: linear-gradient(145deg, rgba(147, 154, 165, 0.42) 0%, rgba(67, 72, 80, 0.1) 100%);
-      --team-role-bg-filled: linear-gradient(145deg, rgba(147, 154, 165, 0.55) 0%, rgba(67, 72, 80, 0.2) 100%);
-      --team-role-shadow: 0 18px 32px rgba(33, 36, 41, 0.34);
-      --team-role-shadow-soft: 0 12px 20px rgba(33, 36, 41, 0.24);
-      --team-action-bg: rgba(244, 245, 247, 0.24);
-      --team-action-bg-hover: rgba(244, 245, 247, 0.34);
-      --team-action-text: #f4f5f7;
-      --team-player-gradient: linear-gradient(135deg, rgba(147, 154, 165, 0.34) 0%, rgba(67, 72, 80, 0) 100%);
+      --team-slot-bg-filled: #5d636b;
+      --team-number-bg: #f4f5f7;
+      --team-number-text: #2f333a;
+      --team-badge-bg: rgba(68, 74, 82, 0.2);
+      --team-badge-text: #1f2227;
+      --team-placeholder-bg: rgba(255, 255, 255, 0.42);
+      --team-placeholder-text: rgba(47, 51, 58, 0.65);
+      --team-role-bg: #f6f7f9;
+      --team-role-bg-filled: #eceef1;
+      --team-role-shadow: 0 8px 18px rgba(68, 74, 82, 0.18);
+      --team-role-shadow-soft: 0 4px 10px rgba(68, 74, 82, 0.14);
+      --team-role-text: #1f2227;
+      --team-action-bg: #444a52;
+      --team-action-bg-hover: #5a6069;
+      --team-action-text: #f7f8f9;
+      --team-player-bg: #f6f7f9;
+      --team-player-text: #1f2227;
+      --team-player-cover: rgba(227, 229, 233, 0.86);
     }
 
     .team-card .composition-header {
@@ -451,10 +460,8 @@
       justify-content: flex-start;
       text-align: center;
       gap: 6px;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      transition: transform 0.2s ease;
       background: var(--team-slot-bg);
-      box-shadow: var(--team-slot-shadow);
-      backdrop-filter: blur(4px);
       isolation: isolate;
       width: min(100%, var(--slot-max-width));
       max-width: var(--slot-max-width);
@@ -465,17 +472,15 @@
     .position-slot::after {
       content: "";
       position: absolute;
-      inset: 18px 24px -32px;
-      background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.28), transparent 70%);
-      border-radius: 999px;
+      inset: -18px;
+      background: radial-gradient(circle, var(--team-slot-bg) 0%, var(--team-slot-bg) 60%, var(--team-field-bg) 100%);
+      border-radius: 32px;
       z-index: -1;
-      opacity: 0.55;
       pointer-events: none;
     }
 
     .position-slot:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 28px 48px rgba(0, 0, 0, 0.38);
+      transform: translateY(-2px);
     }
 
     .position-slot.filled {
@@ -497,18 +502,27 @@
 
     .position-slot .player {
       width: 100%;
-      background: transparent;
-      color: inherit;
+      background: var(--team-player-bg);
+      color: var(--team-player-text);
       border: none;
       box-shadow: none;
-      --player-cover-color: rgba(0, 0, 0, 0.35);
+      --player-cover-color: var(--team-player-cover);
     }
 
     .team-card .player {
-      background: var(--team-player-gradient);
+      background: var(--team-player-bg);
       box-shadow: none;
+      color: var(--team-player-text);
+      --player-cover-color: var(--team-player-cover);
+    }
+
+    .team-card .player .name {
+      background: rgba(255, 255, 255, 0.72);
       color: inherit;
-      --player-cover-color: rgba(0, 0, 0, 0.28);
+      padding: 4px 10px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
     }
 
     .team-card .player button {
@@ -541,7 +555,7 @@
       min-height: 46px;
       transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, opacity 0.2s ease;
       cursor: grab;
-      color: inherit;
+      color: var(--team-role-text);
       box-shadow: var(--team-role-shadow-soft);
     }
 
@@ -550,8 +564,8 @@
       position: absolute;
       inset: 8px 12px;
       border-radius: 12px;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0));
-      opacity: 0.35;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0));
+      opacity: 0.5;
       pointer-events: none;
     }
 
