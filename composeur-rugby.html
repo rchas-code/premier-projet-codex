@@ -4,596 +4,643 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Composeur Rugby</title>
-  <style>
+  
+<style>
+  :root {
+    color-scheme: light;
+    font-family: "Segoe UI", Roboto, sans-serif;
+    --bg: #f5f7fb;
+    --card: #ffffff;
+    --border: #d6d9e3;
+    --accent: #0b3d91;
+    --accent-alt: #00a8e8;
+    --text-muted: #5b6270;
+    --slot-max-width: 286px;
+    --slot-gap: 18px;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: #1f2633;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  button {
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .page {
+    min-height: 100vh;
+    padding: 24px clamp(12px, 4vw, 48px);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    justify-content: space-between;
+  }
+
+  header h1 {
+    font-size: clamp(1.75rem, 2vw, 2.25rem);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-left: auto;
+    justify-content: flex-end;
+  }
+
+  .actions button,
+  .primary-button {
+    border: 1px solid transparent;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-alt));
+    color: #fff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .actions button.secondary {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--accent);
+  }
+
+  .actions button:hover,
+  .primary-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(15, 52, 143, 0.2);
+  }
+
+  .teams-container {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .team-card {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    --field-bg: linear-gradient(180deg, #0b3d91 0%, #0a2f72 60%, #071f4f 100%);
+    --field-text-color: #fff;
+    --field-line-color: rgba(255, 255, 255, 0.35);
+    --slot-bg: linear-gradient(162deg, rgba(13, 52, 95, 0.82), rgba(8, 34, 67, 0.6));
+    --slot-filled-bg: linear-gradient(165deg, rgba(15, 86, 168, 0.9), rgba(10, 58, 128, 0.68));
+    --slot-border: linear-gradient(140deg, rgba(0, 168, 232, 0.48), rgba(10, 54, 146, 0.7), rgba(12, 109, 59, 0.65));
+    --slot-shadow-color: rgba(0, 0, 0, 0.32);
+    --slot-number-bg: rgba(255, 255, 255, 0.85);
+    --slot-number-color: #0b3d91;
+    --sub-slot-bg: rgba(10, 62, 122, 0.25);
+    --placeholder-bg: rgba(10, 62, 122, 0.3);
+    --placeholder-border: rgba(255, 255, 255, 0.45);
+    --placeholder-color: rgba(255, 255, 255, 0.78);
+    --role-slot-border: rgba(255, 255, 255, 0.45);
+    --role-slot-starter-border: rgba(255, 255, 255, 0.85);
+    --role-slot-starter-bar: var(--accent-alt);
+    --role-slot-sub-bar: rgba(255, 255, 255, 0.45);
+    --starter-shadow: 0 6px 14px rgba(9, 40, 94, 0.28);
+  }
+
+  .team-card.theme-green {
+    --field-bg: linear-gradient(180deg, #15733b 0%, #0f9d58 60%, #0a7b34 100%);
+    --slot-bg: linear-gradient(162deg, rgba(13, 95, 52, 0.82), rgba(8, 67, 34, 0.6));
+    --slot-filled-bg: linear-gradient(165deg, rgba(15, 118, 64, 0.9), rgba(10, 78, 41, 0.68));
+    --slot-border: linear-gradient(140deg, rgba(0, 168, 232, 0.55), rgba(10, 54, 146, 0.78), rgba(15, 128, 71, 0.72));
+    --slot-number-color: #0f9d58;
+    --sub-slot-bg: rgba(12, 75, 38, 0.25);
+    --placeholder-bg: rgba(12, 75, 38, 0.3);
+  }
+
+  .team-card.theme-neutral {
+    --field-bg: linear-gradient(180deg, #f2f2f2 0%, #dedede 60%, #cfcfcf 100%);
+    --field-text-color: #1f2633;
+    --field-line-color: transparent;
+    --slot-bg: linear-gradient(162deg, rgba(180, 180, 180, 0.85), rgba(140, 140, 140, 0.65));
+    --slot-filled-bg: linear-gradient(165deg, rgba(130, 130, 130, 0.9), rgba(110, 110, 110, 0.7));
+    --slot-border: linear-gradient(140deg, rgba(230, 230, 230, 0.8), rgba(170, 170, 170, 0.9));
+    --slot-shadow-color: rgba(0, 0, 0, 0.18);
+    --slot-number-bg: rgba(31, 38, 51, 0.9);
+    --slot-number-color: #ffffff;
+    --sub-slot-bg: rgba(210, 210, 210, 0.6);
+    --placeholder-bg: rgba(240, 240, 240, 0.9);
+    --placeholder-border: rgba(160, 160, 160, 0.8);
+    --placeholder-color: #4b4b4b;
+    --role-slot-border: rgba(150, 150, 150, 0.6);
+    --role-slot-starter-border: rgba(31, 38, 51, 0.65);
+    --role-slot-starter-bar: rgba(31, 38, 51, 0.75);
+    --role-slot-sub-bar: rgba(150, 150, 150, 0.6);
+    --starter-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+  }
+
+  .team-layout {
+    display: grid;
+    grid-template-columns: clamp(300px, 24vw, 400px) 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: var(--card);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 12px 30px rgba(15, 35, 95, 0.08);
+    border: 1px solid rgba(12, 41, 92, 0.06);
+    align-self: stretch;
+    min-height: 100%;
+    border-right: 1px solid var(--border);
+    position: sticky;
+    top: 24px;
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+  }
+
+  .sidebar h2 {
+    margin-bottom: 4px;
+  }
+
+  .sidebar .subtitle {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 140px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    padding: 16px;
+    resize: vertical;
+    font: inherit;
+  }
+
+  .sidebar .import-btn {
+    border: 1px solid transparent;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-alt));
+    color: #fff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    align-self: flex-start;
+  }
+
+  .sidebar .import-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(15, 52, 143, 0.2);
+  }
+
+  .pool {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+  }
+
+  .pool-list,
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 120px;
+    padding: 12px;
+    border-radius: 16px;
+    border: 1px dashed var(--border);
+    background: #f9fbff;
+  }
+
+  .pool-list.empty::after,
+  .list.empty::after {
+    content: attr(data-empty-label);
+    color: var(--text-muted);
+    font-style: italic;
+    text-align: center;
+    padding: 24px 0;
+  }
+
+  .player {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #fff;
+    border: 1px solid rgba(15, 52, 143, 0.12);
+    box-shadow: 0 4px 12px rgba(15, 52, 143, 0.08);
+    gap: 10px;
+  }
+
+  .player .name {
+    flex: 1;
+    font-weight: 500;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 28px;
+  }
+
+  .player-actions {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    gap: 6px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .player:hover .player-actions {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .player button {
+    border: none;
+    background: rgba(15, 52, 143, 0.08);
+    color: var(--accent);
+    font-size: 0.85rem;
+    width: 26px;
+    height: 26px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+  }
+
+  .player button:hover {
+    background: rgba(15, 52, 143, 0.18);
+    color: var(--accent-alt);
+  }
+
+  .composition-card {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: var(--card);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 12px 30px rgba(15, 35, 95, 0.08);
+    border: 1px solid rgba(12, 41, 92, 0.06);
+  }
+
+  .composition-header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .team-name-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .team-name-label {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+
+  .team-name-input {
+    font: inherit;
+    font-weight: 600;
+    border: none;
+    background: transparent;
+    padding: 6px 0;
+    border-bottom: 2px solid transparent;
+    font-size: clamp(1.2rem, 2vw, 1.5rem);
+  }
+
+  .team-name-input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: rgba(15, 52, 143, 0.12);
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .badge-group {
+    display: inline-flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .composition-field {
+    position: relative;
+    border-radius: 24px;
+    padding: 28px;
+    background: var(--field-bg);
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.1);
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    grid-auto-rows: minmax(92px, 1fr);
+    gap: var(--slot-gap);
+    justify-items: center;
+    width: 100%;
+    margin: 0 auto;
+    color: var(--field-text-color, #fff);
+  }
+
+  .composition-field::before,
+  .composition-field::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 48px);
+    border-top: 1px dashed var(--field-line-color);
+  }
+
+  .composition-field::before {
+    top: 20%;
+  }
+
+  .composition-field::after {
+    bottom: 20%;
+  }
+
+  .position-slot {
+    position: relative;
+    border-radius: 18px;
+    border: 1.5px solid transparent;
+    padding: 12px 14px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+    gap: 6px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    background: var(--slot-bg) padding-box, var(--slot-border) border-box;
+    box-shadow: 0 22px 38px var(--slot-shadow-color);
+    backdrop-filter: blur(3px);
+    isolation: isolate;
+    width: min(100%, var(--slot-max-width));
+    max-width: var(--slot-max-width);
+    justify-self: center;
+  }
+
+  .position-slot::after {
+    content: "";
+    position: absolute;
+    inset: 16px 20px -26px;
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.35), transparent 65%);
+    border-radius: 999px;
+    z-index: -1;
+    opacity: 0.65;
+    pointer-events: none;
+  }
+
+  .position-slot:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 28px 48px rgba(0, 0, 0, 0.42);
+  }
+
+  .position-slot.filled {
+    background: var(--slot-filled-bg) padding-box, var(--slot-border) border-box;
+  }
+
+  .position-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--slot-number-bg);
+    color: var(--slot-number-color);
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+
+  .position-slot .player {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--accent);
+    border: none;
+    box-shadow: none;
+  }
+
+  .position-player {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .role-slot {
+    position: relative;
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid var(--role-slot-border);
+    background: rgba(255, 255, 255, 0.12);
+    padding: 6px 12px 6px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    cursor: grab;
+  }
+
+  .role-slot::before {
+    content: "";
+    position: absolute;
+    left: 10px;
+    top: 6px;
+    bottom: 6px;
+    width: 4px;
+    border-radius: 999px;
+    background: var(--role-slot-sub-bar);
+  }
+
+  .role-slot.filled {
+    cursor: default;
+  }
+
+  .role-slot.starter {
+    background: rgba(255, 255, 255, 0.24);
+    border-color: var(--role-slot-starter-border);
+    box-shadow: var(--starter-shadow);
+  }
+
+  .role-slot.starter::before {
+    background: var(--role-slot-starter-bar);
+  }
+
+  .role-slot.substitute {
+    background: var(--sub-slot-bg);
+    border-style: dashed;
+  }
+
+  .role-player {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .role-player .placeholder {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.82rem;
+    color: var(--placeholder-color);
+    padding: 6px 8px;
+    border-radius: 10px;
+    border: 1px dashed var(--placeholder-border);
+    background: var(--placeholder-bg);
+    pointer-events: none;
+  }
+
+  .editor-only {
+    display: contents;
+  }
+
+  .actions.editor-only {
+    display: flex;
+  }
+
+  @media (max-width: 1080px) {
     :root {
-      color-scheme: light;
-      font-family: "Segoe UI", Roboto, sans-serif;
-      --bg: #f5f7fb;
-      --card: #ffffff;
-      --border: #d6d9e3;
-      --accent: #0b3d91;
-      --accent-alt: #00a8e8;
-      --text-muted: #5b6270;
-      --slot-max-width: 286px;
-      --slot-gap: 18px;
+      --slot-max-width: 264px;
+      --slot-gap: 16px;
     }
+  }
 
-    * {
-      box-sizing: border-box;
+  @media (max-width: 1024px) {
+    .composition-field {
+      grid-auto-rows: minmax(82px, 1fr);
     }
+  }
 
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: #1f2633;
+  @media (max-width: 900px) {
+    :root {
+      --slot-max-width: 242px;
+      --slot-gap: 14px;
     }
+  }
 
-    h1, h2, h3, h4 {
-      margin: 0;
-      font-weight: 600;
-    }
-
-    button {
-      font: inherit;
-      cursor: pointer;
-    }
-
-    .page {
-      min-height: 100vh;
-      padding: 24px clamp(12px, 4vw, 48px);
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-
-    header {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 16px;
-      justify-content: space-between;
-    }
-
-    header h1 {
-      font-size: clamp(1.75rem, 2vw, 2.25rem);
-    }
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-left: auto;
-      justify-content: flex-end;
-    }
-
-    .actions button,
-    #import-btn {
-      border: 1px solid transparent;
-      padding: 8px 16px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-alt));
-      color: #fff;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .actions button.secondary {
-      background: none;
-      border: 1px solid var(--border);
-      color: var(--accent);
-    }
-
-    .actions button:hover,
-    #import-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 18px rgba(15, 52, 143, 0.2);
-    }
-
-    .layout {
-      display: grid;
-      grid-template-columns: clamp(300px, 24vw, 400px) 1fr;
-      gap: 24px;
-      align-items: start;
+  @media (max-width: 720px) {
+    .team-layout {
+      grid-template-columns: 1fr;
     }
 
     .sidebar {
-      display: flex;
+      position: static;
+      max-height: none;
+      overflow: visible;
+    }
+  }
+
+  @media (max-width: 600px) {
+    header {
       flex-direction: column;
-      gap: 16px;
-      background: var(--card);
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 12px 30px rgba(15, 35, 95, 0.08);
-      border: 1px solid rgba(12, 41, 92, 0.06);
-      align-self: stretch;
-      min-height: 100%;
-      border-right: 1px solid var(--border);
-      position: sticky;
-      top: 24px;
-      max-height: calc(100vh - 48px);
-      overflow-y: auto;
+      align-items: flex-start;
     }
 
-    .sidebar h2 {
-      margin-bottom: 4px;
-    }
-
-    .sidebar #import-btn {
-      align-self: flex-start;
-      border: 1px solid transparent;
-      padding: 10px 16px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-alt));
-      color: #fff;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .sidebar #import-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 18px rgba(15, 52, 143, 0.2);
-    }
-
-    .sidebar .subtitle {
-      margin: 0;
-      color: var(--text-muted);
-      font-size: 0.95rem;
-    }
-
-    textarea {
+    .actions {
       width: 100%;
-      min-height: 140px;
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      padding: 16px;
-      resize: vertical;
-      font: inherit;
-    }
-
-    .pool {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      flex: 1;
-    }
-
-    .pool-list,
-    .list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      min-height: 120px;
-      padding: 12px;
-      border-radius: 16px;
-      border: 1px dashed var(--border);
-      background: #f9fbff;
-    }
-
-    .pool-list.empty::after,
-    .list.empty::after {
-      content: attr(data-empty-label);
-      color: var(--text-muted);
-      font-style: italic;
-      text-align: center;
-      padding: 24px 0;
-    }
-
-    .player {
-      position: relative;
-      display: flex;
-      align-items: center;
       justify-content: flex-start;
-      padding: 10px 12px;
-      border-radius: 12px;
-      background: #fff;
-      border: 1px solid rgba(15, 52, 143, 0.12);
-      box-shadow: 0 4px 12px rgba(15, 52, 143, 0.08);
-      gap: 10px;
     }
 
-    .player .name {
-      flex: 1;
-      font-weight: 500;
-      min-width: 0;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      padding-right: 28px;
+    .actions button {
+      flex: 1 1 auto;
     }
 
-    .player-actions {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      display: inline-flex;
-      gap: 6px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s ease;
+    .sidebar .import-btn {
+      width: 100%;
+      margin-top: 8px;
     }
+  }
 
-    .player:hover .player-actions {
-      opacity: 1;
-      pointer-events: auto;
+  @media (max-width: 560px) {
+    :root {
+      --slot-max-width: 220px;
+      --slot-gap: 12px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .player {
+      flex-direction: column;
+      align-items: flex-start;
     }
 
     .player button {
-      border: none;
-      background: rgba(15, 52, 143, 0.08);
-      color: var(--accent);
-      font-size: 0.85rem;
-      width: 26px;
-      height: 26px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-    }
-
-    .player button:hover {
-      background: rgba(15, 52, 143, 0.18);
-      color: var(--accent-alt);
-    }
-
-    .composition-card {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      background: var(--card);
-      border-radius: 20px;
-      padding: 24px;
-      box-shadow: 0 12px 30px rgba(15, 35, 95, 0.08);
-      border: 1px solid rgba(12, 41, 92, 0.06);
-    }
-
-    .composition-header {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .composition-header h2 {
-      font-size: 1.6rem;
-    }
-
-    .team-name-wrapper {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .team-name-label {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-    }
-
-    #team-name {
-      font: inherit;
-      font-weight: 600;
-      border: none;
-      background: transparent;
-      padding: 6px 0;
-      border-bottom: 2px solid transparent;
-      font-size: clamp(1.2rem, 2vw, 1.5rem);
-    }
-
-    #team-name:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2px 10px;
-      border-radius: 999px;
-      background: rgba(15, 52, 143, 0.12);
-      color: var(--accent);
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-
-    .badge-group {
-      display: inline-flex;
-      gap: 8px;
-      flex-wrap: wrap;
+      align-self: flex-end;
     }
 
     .composition-field {
-      position: relative;
-      border-radius: 24px;
-      padding: 28px;
-      background: linear-gradient(180deg, #15733b 0%, #0f9d58 60%, #0a7b34 100%);
-      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.1);
-      display: grid;
-      grid-template-columns: repeat(8, minmax(0, 1fr));
-      grid-auto-rows: minmax(92px, 1fr);
-      gap: var(--slot-gap);
-      justify-items: center;
-      width: 100%;
-      margin: 0 auto;
-      color: #fff;
+      padding: 18px;
+    }
+  }
+
+  @media print {
+    body {
+      background: #fff;
     }
 
-    .composition-field::before,
-    .composition-field::after {
-      content: "";
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      width: calc(100% - 48px);
-      border-top: 1px dashed rgba(255, 255, 255, 0.35);
-    }
-
-    .composition-field::before {
-      top: 20%;
-    }
-
-    .composition-field::after {
-      bottom: 20%;
-    }
-
-    .position-slot {
-      position: relative;
-      border-radius: 18px;
-      border: 1.5px solid transparent;
-      padding: 12px 14px 16px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      text-align: center;
-      gap: 6px;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-      background:
-        linear-gradient(162deg, rgba(13, 95, 52, 0.82), rgba(8, 67, 34, 0.6)) padding-box,
-        linear-gradient(140deg, rgba(0, 168, 232, 0.48), rgba(10, 54, 146, 0.7), rgba(12, 109, 59, 0.65)) border-box;
-      box-shadow: 0 22px 38px rgba(0, 0, 0, 0.32);
-      backdrop-filter: blur(3px);
-      isolation: isolate;
-      width: min(100%, var(--slot-max-width));
-      max-width: var(--slot-max-width);
-      justify-self: center;
-    }
-
-    .position-slot::after {
-      content: "";
-      position: absolute;
-      inset: 16px 20px -26px;
-      background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.35), transparent 65%);
-      border-radius: 999px;
-      z-index: -1;
-      opacity: 0.65;
-      pointer-events: none;
-    }
-
-    .position-slot:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 28px 48px rgba(0, 0, 0, 0.42);
-    }
-
-    .position-slot.filled {
-      background:
-        linear-gradient(165deg, rgba(15, 118, 64, 0.9), rgba(10, 78, 41, 0.68)) padding-box,
-        linear-gradient(140deg, rgba(0, 168, 232, 0.55), rgba(10, 54, 146, 0.78), rgba(15, 128, 71, 0.72)) border-box;
-    }
-
-    .position-number {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.85);
-      color: var(--accent);
-      font-weight: 700;
-      font-size: 1.1rem;
-    }
-
-    .position-slot .player {
-      width: 100%;
-      background: rgba(255, 255, 255, 0.95);
-      color: var(--accent);
-      border: none;
-      box-shadow: none;
-    }
-
-    .position-player {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .role-slot {
-      position: relative;
-      width: 100%;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.45);
-      background: rgba(255, 255, 255, 0.12);
-      padding: 6px 12px 6px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 44px;
-      transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-      cursor: grab;
-    }
-
-    .role-slot::before {
-      content: "";
-      position: absolute;
-      left: 10px;
-      top: 6px;
-      bottom: 6px;
-      width: 4px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.6);
-    }
-
-    .role-slot.filled {
-      cursor: default;
-    }
-
-    .role-slot.starter {
-      background: rgba(255, 255, 255, 0.24);
-      border-color: rgba(255, 255, 255, 0.85);
-      box-shadow: 0 6px 14px rgba(9, 40, 94, 0.28);
-    }
-
-    .role-slot.starter::before {
-      background: var(--accent-alt);
-    }
-
-    .role-slot.substitute {
-      background: rgba(12, 75, 38, 0.25);
-      border-style: dashed;
-    }
-
-    .role-slot.substitute::before {
-      background: rgba(255, 255, 255, 0.45);
-    }
-
-    .role-player {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .role-player .placeholder {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.82rem;
-      color: rgba(255, 255, 255, 0.78);
-      padding: 6px 8px;
-      border-radius: 10px;
-      border: 1px dashed rgba(255, 255, 255, 0.45);
-      background: rgba(12, 75, 38, 0.3);
-      pointer-events: none;
-    }
-
+    header,
     .editor-only {
-      display: contents;
+      display: none !important;
     }
 
-    .layout.editor-only {
-      display: grid;
+    .composition-card {
+      box-shadow: none;
+      border: none;
     }
 
-    .actions.editor-only {
-      display: flex;
+    .composition-field {
+      color: #000;
     }
+  }
+</style>
 
-    @media (max-width: 1080px) {
-      :root {
-        --slot-max-width: 264px;
-        --slot-gap: 16px;
-      }
-    }
-
-    @media (max-width: 1024px) {
-      .composition-field {
-        grid-auto-rows: minmax(82px, 1fr);
-      }
-    }
-
-    @media (max-width: 900px) {
-      :root {
-        --slot-max-width: 242px;
-        --slot-gap: 14px;
-      }
-    }
-
-    @media (max-width: 720px) {
-      .layout {
-        grid-template-columns: 1fr;
-      }
-
-      .sidebar {
-        position: static;
-        max-height: none;
-        overflow: visible;
-      }
-
-      .composition-field {
-        grid-auto-rows: minmax(72px, 1fr);
-        padding: 22px;
-      }
-    }
-
-    @media (max-width: 560px) {
-      :root {
-        --slot-max-width: 220px;
-        --slot-gap: 12px;
-      }
-    }
-
-    @media (max-width: 600px) {
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .actions {
-        width: 100%;
-        justify-content: flex-start;
-      }
-
-      .actions button {
-        flex: 1 1 auto;
-      }
-
-      .sidebar #import-btn {
-        width: 100%;
-        margin-top: 8px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .player {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .player button {
-        align-self: flex-end;
-      }
-      .composition-field {
-        padding: 18px;
-      }
-    }
-
-    @media print {
-      body {
-        background: #fff;
-      }
-
-      header,
-      .editor-only {
-        display: none !important;
-      }
-
-      .composition-card {
-        box-shadow: none;
-        border: none;
-      }
-
-      .composition-field {
-        color: #000;
-      }
-    }
-  </style>
 </head>
 <body>
   <div class="page">
     <header>
       <h1>Composeur de XV de Rugby</h1>
       <div class="actions editor-only">
+        <button id="add-team-btn" class="primary-button">Ajouter une équipe</button>
         <button id="save-btn">Sauvegarder</button>
         <button id="load-btn" class="secondary">Charger</button>
         <button id="print-btn" class="secondary">Imprimer</button>
@@ -601,37 +648,10 @@
       </div>
     </header>
 
-    <div class="layout editor-only">
-      <section class="card sidebar">
-        <div>
-          <h2>Joueurs présents</h2>
-          <p class="subtitle">Commencez par entrer tous vos joueurs ici. Puis créez votre composition.</p>
-        </div>
-        <textarea id="import-input" placeholder="Ex. Antoine Dupont; Romain Ntamack, Grégory Alldritt"></textarea>
-        <button id="import-btn">Ajouter les joueurs</button>
-        <div class="pool">
-          <h3>Effectif du jour</h3>
-          <div id="pool-list" class="pool-list" data-drop-target="pool" data-empty-label="Aucun joueur">
-          </div>
-        </div>
-      </section>
-
-      <section class="composition-card">
-        <div class="composition-header">
-          <div class="team-name-wrapper">
-            <span class="team-name-label">Nom de l'équipe</span>
-            <input type="text" id="team-name" value="Équipe" />
-          </div>
-          <div class="badge-group">
-            <span class="badge" id="starters-count">Tit. 0 / 15</span>
-            <span class="badge" id="substitutes-count">Remp. 0 / 15</span>
-          </div>
-        </div>
-        <div class="composition-field" id="composition-field"></div>
-      </section>
-    </div>
+    <div id="teams-container" class="teams-container"></div>
   </div>
 
+  
   <script>
     const STORAGE_KEY = "composeur-rugby-state";
 
@@ -658,11 +678,23 @@
       { id: "pos-15", number: "15", label: "Arrière", row: 6, colStart: 4, colSpan: 2 }
     ];
 
-    const defaultState = () => ({
-      pool: [],
-      lineup: POSITION_PRESET.map((slot) => ({ ...slot, starter: null, substitute: null })),
+    const TEAM_DEFINITIONS = [
+      { key: "blue", defaultName: "Équipe bleue", theme: "theme-blue" },
+      { key: "green", defaultName: "Équipe verte", theme: "theme-green" },
+      { key: "neutral", defaultName: "Sans maillot", theme: "theme-neutral" }
+    ];
+
+    const defaultTeamState = (definition) => ({
+      id: definition.key,
+      key: definition.key,
+      teamName: definition.defaultName,
       playersText: "",
-      teamName: "Équipe"
+      pool: [],
+      lineup: POSITION_PRESET.map((slot) => ({ ...slot, starter: null, substitute: null }))
+    });
+
+    const defaultState = () => ({
+      teams: [defaultTeamState(TEAM_DEFINITIONS[0])]
     });
 
     const escapeHTML = (value) => {
@@ -688,6 +720,35 @@
       return player && typeof player.id === "string" && typeof player.name === "string";
     };
 
+    const cloneLineup = (lineup) => {
+      return POSITION_PRESET.map((slot) => {
+        const saved = Array.isArray(lineup) ? lineup.find((item) => item.id === slot.id) : null;
+        const starter = saved && isValidPlayer(saved.starter)
+          ? saved.starter
+          : saved && isValidPlayer(saved.player)
+          ? saved.player
+          : null;
+        const substitute = saved && isValidPlayer(saved.substitute) ? saved.substitute : null;
+        return { ...slot, starter, substitute };
+      });
+    };
+
+    const normalizeTeam = (rawTeam, fallbackDefinition) => {
+      const definition = TEAM_DEFINITIONS.find((def) => def.key === rawTeam?.key) || fallbackDefinition;
+      if (!definition) {
+        return null;
+      }
+      const team = defaultTeamState(definition);
+      team.id = typeof rawTeam?.id === "string" ? rawTeam.id : definition.key;
+      team.teamName = typeof rawTeam?.teamName === "string" && rawTeam.teamName.trim()
+        ? rawTeam.teamName
+        : definition.defaultName;
+      team.playersText = typeof rawTeam?.playersText === "string" ? rawTeam.playersText : "";
+      team.pool = Array.isArray(rawTeam?.pool) ? rawTeam.pool.filter(isValidPlayer) : [];
+      team.lineup = cloneLineup(rawTeam?.lineup);
+      return team;
+    };
+
     const saveState = () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     };
@@ -696,32 +757,55 @@
       try {
         const raw = JSON.parse(localStorage.getItem(STORAGE_KEY));
         if (!raw) return null;
-        const base = defaultState();
-        base.playersText = typeof raw.playersText === "string" ? raw.playersText : "";
-        base.teamName = typeof raw.teamName === "string" && raw.teamName.trim() ? raw.teamName : base.teamName;
-        base.pool = Array.isArray(raw.pool) ? raw.pool.filter(isValidPlayer) : [];
-        base.lineup = POSITION_PRESET.map((slot) => {
-          const saved = Array.isArray(raw.lineup) ? raw.lineup.find((item) => item.id === slot.id) : null;
-          const starter = saved && isValidPlayer(saved.starter)
-            ? saved.starter
-            : saved && isValidPlayer(saved.player)
-            ? saved.player
-            : null;
-          const substitute = saved && isValidPlayer(saved.substitute) ? saved.substitute : null;
-          return { ...slot, starter, substitute };
-        });
-        return base;
+
+        if (Array.isArray(raw.teams)) {
+          const teams = [];
+          const usedKeys = new Set();
+          raw.teams.forEach((entry, index) => {
+            const normalized = normalizeTeam(entry, TEAM_DEFINITIONS[index] || TEAM_DEFINITIONS[0]);
+            if (!normalized || usedKeys.has(normalized.key)) {
+              return;
+            }
+            usedKeys.add(normalized.key);
+            teams.push(normalized);
+          });
+          if (teams.length > 0) {
+            return { teams };
+          }
+        }
+
+        if (raw && Array.isArray(raw.lineup)) {
+          const base = defaultState();
+          const team = base.teams[0];
+          team.teamName = typeof raw.teamName === "string" && raw.teamName.trim() ? raw.teamName : team.teamName;
+          team.playersText = typeof raw.playersText === "string" ? raw.playersText : "";
+          team.pool = Array.isArray(raw.pool) ? raw.pool.filter(isValidPlayer) : [];
+          team.lineup = cloneLineup(raw.lineup);
+          return base;
+        }
       } catch (error) {
         console.error("Impossible de charger l'état", error);
-        return null;
       }
+      return null;
     };
 
     let state = loadState() || defaultState();
 
-    const getAllPlayers = () => {
-      const players = [...state.pool];
-      state.lineup.forEach((slot) => {
+    const getTeamDefinition = (team) => {
+      return TEAM_DEFINITIONS.find((definition) => definition.key === team.key) || TEAM_DEFINITIONS[0];
+    };
+
+    const getTeamById = (teamId) => {
+      return state.teams.find((team) => team.id === teamId);
+    };
+
+    const availableTeamDefinition = () => {
+      return TEAM_DEFINITIONS.find((definition) => !state.teams.some((team) => team.key === definition.key));
+    };
+
+    const getAllPlayers = (team) => {
+      const players = [...team.pool];
+      team.lineup.forEach((slot) => {
         if (slot.starter) {
           players.push(slot.starter);
         }
@@ -732,38 +816,34 @@
       return players;
     };
 
-    const playerExists = (name) => {
-      return getAllPlayers().some((player) => player.name.toLowerCase() === name.toLowerCase());
+    const playerExists = (team, name) => {
+      return getAllPlayers(team).some((player) => player.name.toLowerCase() === name.toLowerCase());
     };
 
-    const importPlayers = () => {
-      const textarea = document.getElementById("import-input");
-      const value = textarea.value;
-      state.playersText = value;
-      const names = value
-        .split(/[\n,;]+/)
+    const importPlayers = (teamId) => {
+      const team = getTeamById(teamId);
+      if (!team) return;
+      const names = team.playersText
+        .split(/[
+,;]+/)
         .map((name) => name.trim())
         .filter((name) => name.length > 0);
       names.forEach((name) => {
-        if (!playerExists(name)) {
-          state.pool.push({ id: uid(), name });
+        if (!playerExists(team, name)) {
+          team.pool.push({ id: uid(), name });
         }
       });
-      state.pool.sort((a, b) => a.name.localeCompare(b.name, "fr"));
-      render();
-      saveState();
+      team.pool.sort((a, b) => a.name.localeCompare(b.name, "fr"));
     };
 
-    const takePlayer = (playerId) => {
+    const takePlayer = (team, playerId) => {
+      if (!team) return null;
       let player = null;
-      const extractFrom = (list) => {
-        const index = list.findIndex((item) => item.id === playerId);
-        if (index !== -1) {
-          player = list.splice(index, 1)[0];
-        }
-      };
-      extractFrom(state.pool);
-      state.lineup.forEach((slot) => {
+      const poolIndex = team.pool.findIndex((item) => item.id === playerId);
+      if (poolIndex !== -1) {
+        player = team.pool.splice(poolIndex, 1)[0];
+      }
+      team.lineup.forEach((slot) => {
         if (slot.starter && slot.starter.id === playerId) {
           player = slot.starter;
           slot.starter = null;
@@ -776,32 +856,38 @@
       return player;
     };
 
-    const moveToPool = (playerId) => {
-      const player = takePlayer(playerId);
+    const moveToPool = (teamId, playerId) => {
+      const team = getTeamById(teamId);
+      if (!team) return;
+      const player = takePlayer(team, playerId);
       if (!player) return;
-      if (!state.pool.some((item) => item.id === player.id)) {
-        state.pool.push(player);
-        state.pool.sort((a, b) => a.name.localeCompare(b.name, "fr"));
+      if (!team.pool.some((item) => item.id === player.id)) {
+        team.pool.push(player);
+        team.pool.sort((a, b) => a.name.localeCompare(b.name, "fr"));
       }
     };
 
-    const placeInPosition = (playerId, positionId, role = "starter") => {
-      const slot = state.lineup.find((item) => item.id === positionId);
+    const placeInPosition = (teamId, playerId, positionId, role = "starter") => {
+      const team = getTeamById(teamId);
+      if (!team) return;
+      const slot = team.lineup.find((item) => item.id === positionId);
       if (!slot) return;
-      const incoming = takePlayer(playerId);
+      const incoming = takePlayer(team, playerId);
       if (!incoming) return;
       const key = role === "substitute" ? "substitute" : "starter";
       const previous = slot[key];
       if (previous && previous.id !== incoming.id) {
-        if (!state.pool.some((item) => item.id === previous.id)) {
-          state.pool.push(previous);
-          state.pool.sort((a, b) => a.name.localeCompare(b.name, "fr"));
+        if (!team.pool.some((item) => item.id === previous.id)) {
+          team.pool.push(previous);
+          team.pool.sort((a, b) => a.name.localeCompare(b.name, "fr"));
         }
       }
       slot[key] = incoming;
     };
 
-    const deletePlayer = (playerId) => {
+    const deletePlayer = (teamId, playerId) => {
+      const team = getTeamById(teamId);
+      if (!team) return;
       const removeFrom = (list) => {
         const index = list.findIndex((player) => player.id === playerId);
         if (index !== -1) {
@@ -810,8 +896,8 @@
         }
         return false;
       };
-      if (removeFrom(state.pool)) return;
-      state.lineup.forEach((slot) => {
+      if (removeFrom(team.pool)) return;
+      team.lineup.forEach((slot) => {
         if (slot.starter && slot.starter.id === playerId) {
           slot.starter = null;
         }
@@ -827,11 +913,18 @@
       saveState();
     };
 
-    const buildPlayerElement = (player, context) => {
+    const getTeamStats = (team) => {
+      const starters = team.lineup.filter((slot) => !!slot.starter).length;
+      const substitutes = team.lineup.filter((slot) => !!slot.substitute).length;
+      return { starters, substitutes };
+    };
+
+    const buildPlayerElement = (player, context, teamId) => {
       const item = document.createElement("div");
       item.className = "player";
       item.draggable = true;
       item.dataset.playerId = player.id;
+      item.dataset.teamId = teamId;
       const safeName = escapeHTML(player.name);
       item.innerHTML = `
         <span class="name">${safeName}</span>
@@ -856,29 +949,118 @@
       return item;
     };
 
-    const renderPool = () => {
-      const pool = document.getElementById("pool-list");
-      pool.innerHTML = "";
-      if (state.pool.length === 0) {
-        pool.classList.add("empty");
-      } else {
-        pool.classList.remove("empty");
+    const buildTeamCard = (team) => {
+      const definition = getTeamDefinition(team);
+      const section = document.createElement("section");
+      section.className = "team-card";
+      section.dataset.teamId = team.id;
+      if (definition?.theme) {
+        section.classList.add(definition.theme);
       }
-      state.pool.forEach((player) => {
-        pool.appendChild(buildPlayerElement(player, "pool"));
-      });
-    };
 
-    const renderLineup = () => {
-      const field = document.getElementById("composition-field");
-      field.innerHTML = "";
-      state.lineup.forEach((slot) => {
+      const layout = document.createElement("div");
+      layout.className = "team-layout";
+      section.appendChild(layout);
+
+      const sidebar = document.createElement("aside");
+      sidebar.className = "sidebar";
+      layout.appendChild(sidebar);
+
+      const intro = document.createElement("div");
+      const title = document.createElement("h2");
+      title.textContent = "Joueurs présents";
+      const subtitle = document.createElement("p");
+      subtitle.className = "subtitle";
+      subtitle.textContent = "Commencez par entrer tous vos joueurs ici. Puis créez votre composition.";
+      intro.appendChild(title);
+      intro.appendChild(subtitle);
+      sidebar.appendChild(intro);
+
+      const textarea = document.createElement("textarea");
+      textarea.className = "import-input";
+      textarea.placeholder = "Ex. Antoine Dupont; Romain Ntamack, Grégory Alldritt";
+      textarea.dataset.teamId = team.id;
+      textarea.dataset.teamField = "players-text";
+      textarea.value = team.playersText;
+      sidebar.appendChild(textarea);
+
+      const importBtn = document.createElement("button");
+      importBtn.type = "button";
+      importBtn.className = "import-btn";
+      importBtn.dataset.action = "import-players";
+      importBtn.dataset.teamId = team.id;
+      importBtn.textContent = "Ajouter les joueurs";
+      sidebar.appendChild(importBtn);
+
+      const poolWrapper = document.createElement("div");
+      poolWrapper.className = "pool";
+      const poolTitle = document.createElement("h3");
+      poolTitle.textContent = "Effectif du jour";
+      const poolList = document.createElement("div");
+      poolList.className = "pool-list";
+      poolList.dataset.dropTarget = "pool";
+      poolList.dataset.teamId = team.id;
+      poolList.dataset.emptyLabel = "Aucun joueur";
+      if (team.pool.length === 0) {
+        poolList.classList.add("empty");
+      }
+      team.pool.forEach((player) => {
+        poolList.appendChild(buildPlayerElement(player, "pool", team.id));
+      });
+      poolWrapper.appendChild(poolTitle);
+      poolWrapper.appendChild(poolList);
+      sidebar.appendChild(poolWrapper);
+
+      const composition = document.createElement("section");
+      composition.className = "composition-card";
+      layout.appendChild(composition);
+
+      const header = document.createElement("div");
+      header.className = "composition-header";
+      const nameWrapper = document.createElement("div");
+      nameWrapper.className = "team-name-wrapper";
+      const label = document.createElement("span");
+      label.className = "team-name-label";
+      label.textContent = "Nom de l'équipe";
+      const input = document.createElement("input");
+      input.type = "text";
+      input.className = "team-name-input";
+      input.value = team.teamName;
+      input.dataset.teamId = team.id;
+      input.dataset.teamField = "name";
+      nameWrapper.appendChild(label);
+      nameWrapper.appendChild(input);
+      header.appendChild(nameWrapper);
+
+      const badges = document.createElement("div");
+      badges.className = "badge-group";
+      const stats = getTeamStats(team);
+      const startersBadge = document.createElement("span");
+      startersBadge.className = "badge";
+      startersBadge.textContent = `Tit. ${stats.starters} / 15`;
+      const substitutesBadge = document.createElement("span");
+      substitutesBadge.className = "badge";
+      substitutesBadge.textContent = `Remp. ${stats.substitutes} / 15`;
+      badges.appendChild(startersBadge);
+      badges.appendChild(substitutesBadge);
+      header.appendChild(badges);
+      composition.appendChild(header);
+
+      const field = document.createElement("div");
+      field.className = "composition-field";
+      field.dataset.teamId = team.id;
+      composition.appendChild(field);
+
+      team.lineup.forEach((slot) => {
         const slotEl = document.createElement("div");
         slotEl.className = "position-slot";
         slotEl.style.gridRow = slot.row;
         const colStart = typeof slot.colStart === "number" ? slot.colStart : slot.col || 1;
         const colSpan = typeof slot.colSpan === "number" ? slot.colSpan : 1;
         slotEl.style.gridColumn = `${colStart} / span ${colSpan}`;
+        if (slot.starter || slot.substitute) {
+          slotEl.classList.add("filled");
+        }
         slotEl.innerHTML = `
           <span class="position-number">${slot.number}</span>
           <div class="position-player"></div>
@@ -887,55 +1069,63 @@
         const container = slotEl.querySelector(".position-player");
 
         const starterSlot = document.createElement("div");
-        starterSlot.className = `role-slot starter${slot.starter ? " filled" : ""}`;
+        starterSlot.className = "role-slot starter";
         starterSlot.dataset.dropTarget = "position";
+        starterSlot.dataset.teamId = team.id;
         starterSlot.dataset.positionId = slot.id;
         starterSlot.dataset.role = "starter";
         starterSlot.title = "Titulaire";
-        starterSlot.innerHTML = `
-          <div class="role-player"></div>
-        `;
-        const starterContainer = starterSlot.querySelector(".role-player");
+        const starterContainer = document.createElement("div");
+        starterContainer.className = "role-player";
         if (slot.starter) {
-          starterContainer.appendChild(buildPlayerElement(slot.starter, "position"));
+          starterSlot.classList.add("filled");
+          starterContainer.appendChild(buildPlayerElement(slot.starter, "position", team.id));
         } else {
           starterContainer.innerHTML = '<span class="placeholder">Glisser ici</span>';
         }
+        starterSlot.appendChild(starterContainer);
 
         const substituteSlot = document.createElement("div");
-        substituteSlot.className = `role-slot substitute${slot.substitute ? " filled" : ""}`;
+        substituteSlot.className = "role-slot substitute";
         substituteSlot.dataset.dropTarget = "position";
+        substituteSlot.dataset.teamId = team.id;
         substituteSlot.dataset.positionId = slot.id;
         substituteSlot.dataset.role = "substitute";
         substituteSlot.title = "Remplaçant";
-        substituteSlot.innerHTML = `
-          <div class="role-player"></div>
-        `;
-        const substituteContainer = substituteSlot.querySelector(".role-player");
+        const substituteContainer = document.createElement("div");
+        substituteContainer.className = "role-player";
         if (slot.substitute) {
-          substituteContainer.appendChild(buildPlayerElement(slot.substitute, "position"));
+          substituteSlot.classList.add("filled");
+          substituteContainer.appendChild(buildPlayerElement(slot.substitute, "position", team.id));
         } else {
           substituteContainer.innerHTML = '<span class="placeholder">Glisser ici</span>';
         }
+        substituteSlot.appendChild(substituteContainer);
 
         container.appendChild(starterSlot);
         container.appendChild(substituteSlot);
         field.appendChild(slotEl);
       });
+
+      return section;
     };
 
-    const updateBadges = () => {
-      const startersCount = state.lineup.filter((slot) => !!slot.starter).length;
-      const substitutesCount = state.lineup.filter((slot) => !!slot.substitute).length;
-      document.getElementById("starters-count").textContent = `Tit. ${startersCount} / 15`;
-      document.getElementById("substitutes-count").textContent = `Remp. ${substitutesCount} / 15`;
+    const updateAddTeamButton = () => {
+      const button = document.getElementById("add-team-btn");
+      if (!button) return;
+      const available = !!availableTeamDefinition();
+      button.disabled = !available;
+      button.title = available ? "" : "Nombre maximum d'équipes atteint";
     };
 
     const attachDnDHandlers = () => {
       document.querySelectorAll(".player").forEach((el) => {
         el.addEventListener("dragstart", (event) => {
-          const id = el.dataset.playerId;
-          event.dataTransfer.setData("text/plain", id);
+          const playerId = el.dataset.playerId;
+          const teamId = el.dataset.teamId;
+          if (!playerId || !teamId) return;
+          event.dataTransfer.setData("text/plain", playerId);
+          event.dataTransfer.setData("team-id", teamId);
           event.dataTransfer.effectAllowed = "move";
         });
       });
@@ -948,12 +1138,16 @@
         zone.addEventListener("drop", (event) => {
           event.preventDefault();
           const playerId = event.dataTransfer.getData("text/plain");
+          const fromTeamId = event.dataTransfer.getData("team-id");
+          const toTeamId = zone.dataset.teamId;
+          if (!playerId || !toTeamId || fromTeamId !== toTeamId) {
+            return;
+          }
           const target = zone.dataset.dropTarget;
-          if (!playerId || !target) return;
           if (target === "pool") {
-            moveToPool(playerId);
+            moveToPool(toTeamId, playerId);
           } else if (target === "position") {
-            placeInPosition(playerId, zone.dataset.positionId, zone.dataset.role);
+            placeInPosition(toTeamId, playerId, zone.dataset.positionId, zone.dataset.role);
           }
           render();
           saveState();
@@ -962,50 +1156,67 @@
     };
 
     const render = () => {
-      const textarea = document.getElementById("import-input");
-      if (document.activeElement !== textarea) {
-        textarea.value = state.playersText;
-      }
-      const teamNameInput = document.getElementById("team-name");
-      if (document.activeElement !== teamNameInput) {
-        teamNameInput.value = state.teamName;
-      }
-      renderPool();
-      renderLineup();
-      updateBadges();
+      const container = document.getElementById("teams-container");
+      container.innerHTML = "";
+      state.teams.forEach((team) => {
+        container.appendChild(buildTeamCard(team));
+      });
       attachDnDHandlers();
+      updateAddTeamButton();
     };
 
     document.addEventListener("input", (event) => {
-      if (event.target.id === "import-input") {
-        state.playersText = event.target.value;
+      const teamId = event.target.dataset.teamId;
+      const field = event.target.dataset.teamField;
+      if (!teamId || !field) return;
+      const team = getTeamById(teamId);
+      if (!team) return;
+      if (field === "players-text") {
+        team.playersText = event.target.value;
       }
-      if (event.target.id === "team-name") {
-        state.teamName = event.target.value.trim() || "Équipe";
-        saveState();
+      if (field === "name") {
+        const definition = getTeamDefinition(team);
+        team.teamName = event.target.value.trim() || definition.defaultName;
       }
+      saveState();
     });
 
     document.addEventListener("click", (event) => {
       const action = event.target.dataset.action;
       if (!action) return;
+      if (action === "import-players") {
+        const teamId = event.target.dataset.teamId;
+        if (!teamId) return;
+        importPlayers(teamId);
+        render();
+        saveState();
+        return;
+      }
       const playerEl = event.target.closest(".player");
       if (!playerEl) return;
       const playerId = playerEl.dataset.playerId;
-      if (!playerId) return;
+      const teamId = playerEl.dataset.teamId;
+      if (!playerId || !teamId) return;
       if (action === "delete-player") {
-        deletePlayer(playerId);
+        deletePlayer(teamId, playerId);
       }
       if (action === "send-to-pool") {
-        moveToPool(playerId);
+        moveToPool(teamId, playerId);
       }
       render();
       saveState();
     });
 
-    document.getElementById("import-btn").addEventListener("click", () => {
-      importPlayers();
-    });
+    const addTeamButton = document.getElementById("add-team-btn");
+    if (addTeamButton) {
+      addTeamButton.addEventListener("click", () => {
+        const definition = availableTeamDefinition();
+        if (!definition) return;
+        state.teams.push(defaultTeamState(definition));
+        render();
+        saveState();
+      });
+    }
 
     document.getElementById("save-btn").addEventListener("click", () => {
       saveState();
@@ -1029,12 +1240,8 @@
       window.print();
     });
 
-    const poolList = document.getElementById("pool-list");
-    poolList.addEventListener("dragenter", (event) => {
-      event.preventDefault();
-    });
-
     render();
   </script>
+
 </body>
 </html>
