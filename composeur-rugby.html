@@ -239,21 +239,42 @@
       position: absolute;
       inset: 16px;
       border-radius: 18px;
-      background-image: repeating-linear-gradient(
+      background-image:
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.35) 0, rgba(255, 255, 255, 0.35) 6%, transparent 6%),
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.18) 0, rgba(255, 255, 255, 0.18) 15%, transparent 15%),
+        linear-gradient(
           to bottom,
-          rgba(255, 255, 255, 0.14),
-          rgba(255, 255, 255, 0.14) 1px,
-          transparent 1px,
-          transparent calc(100% / 6)
+          transparent 0,
+          transparent 9%,
+          rgba(255, 255, 255, 0.3) 9%,
+          rgba(255, 255, 255, 0.3) 10%,
+          transparent 10%
         ),
-        repeating-linear-gradient(
+        linear-gradient(
+          to bottom,
+          transparent 0,
+          transparent 50%,
+          rgba(255, 255, 255, 0.45) 50%,
+          rgba(255, 255, 255, 0.45) 51%,
+          transparent 51%
+        ),
+        linear-gradient(
+          to top,
+          transparent 0,
+          transparent 9%,
+          rgba(255, 255, 255, 0.3) 9%,
+          rgba(255, 255, 255, 0.3) 10%,
+          transparent 10%
+        ),
+        linear-gradient(
           to right,
-          rgba(255, 255, 255, 0.12),
-          rgba(255, 255, 255, 0.12) 1px,
-          transparent 1px,
-          transparent calc(100% / 7)
+          rgba(255, 255, 255, 0.22) 0,
+          rgba(255, 255, 255, 0.22) 1.2%,
+          transparent 1.2%,
+          transparent 98.8%,
+          rgba(255, 255, 255, 0.22) 98.8%
         );
-      opacity: 0.45;
+      background-repeat: no-repeat;
       pointer-events: none;
     }
 
@@ -278,21 +299,18 @@
       max-width: 420px;
     }
 
-    .lineup-grid {
+    .lineup-field {
       position: relative;
       z-index: 1;
       flex: 1;
-      display: grid;
-      grid-template-columns: repeat(7, minmax(70px, 1fr));
-      grid-template-rows: repeat(6, 1fr);
-      gap: 14px;
-      padding: 12px 0 20px;
-      min-height: 100%;
-      align-items: center;
-      align-content: space-between;
+      min-height: 620px;
+      width: min(100%, 960px);
+      margin: 8px auto 0;
     }
 
     .position-card {
+      position: absolute;
+      transform: translate(-50%, -50%);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -303,8 +321,7 @@
       box-shadow: 0 10px 24px rgba(8, 38, 70, 0.24);
       border: 1px solid rgba(11, 61, 145, 0.12);
       color: #1f2633;
-      width: min(220px, 100%);
-      justify-self: center;
+      width: clamp(140px, 12vw, 200px);
     }
 
     .position-number {
@@ -431,14 +448,20 @@
         flex: 1 1 auto;
       }
 
-      .lineup-grid {
-        grid-template-columns: repeat(7, minmax(48px, 1fr));
-        gap: 8px;
+      .lineup-field {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+        padding-bottom: 24px;
+        min-height: auto;
+        margin-top: 16px;
       }
 
-      .position-card {
+      .lineup-field .position-card {
+        position: static;
+        transform: none;
         width: 100%;
-        padding: 10px;
+        padding: 12px;
       }
 
       .position-label {
@@ -532,7 +555,7 @@
             <p class="subtitle">Placez un titulaire et un remplaçant à chaque poste tout en conservant la numérotation historique du rugby.</p>
           </div>
         </div>
-        <div id="lineup-grid" class="lineup-grid"></div>
+        <div id="lineup-field" class="lineup-field"></div>
       </section>
     </div>
   </div>
@@ -546,21 +569,21 @@
     })();
 
     const POSITIONS = [
-      { number: 11, label: "Ailier gauche", row: 1, col: 1 },
-      { number: 15, label: "Arrière", row: 1, col: 4 },
-      { number: 14, label: "Ailier droit", row: 1, col: 7 },
-      { number: 12, label: "Centre intérieur", row: 2, col: 3 },
-      { number: 13, label: "Centre extérieur", row: 2, col: 5 },
-      { number: 10, label: "Demi d'ouverture", row: 3, col: 3 },
-      { number: 9, label: "Demi de mêlée", row: 3, col: 5 },
-      { number: 6, label: "Troisième ligne aile", row: 4, col: 2 },
-      { number: 8, label: "Troisième ligne centre", row: 4, col: 4 },
-      { number: 7, label: "Troisième ligne aile", row: 4, col: 6 },
-      { number: 4, label: "Deuxième ligne", row: 5, col: 3 },
-      { number: 5, label: "Deuxième ligne", row: 5, col: 5 },
-      { number: 1, label: "Pilier gauche", row: 6, col: 2 },
-      { number: 2, label: "Talonneur", row: 6, col: 4 },
-      { number: 3, label: "Pilier droit", row: 6, col: 6 }
+      { number: 15, label: "Arrière", top: 18, left: 50 },
+      { number: 11, label: "Ailier gauche", top: 26, left: 24 },
+      { number: 14, label: "Ailier droit", top: 26, left: 76 },
+      { number: 12, label: "Centre intérieur", top: 38, left: 40 },
+      { number: 13, label: "Centre extérieur", top: 38, left: 60 },
+      { number: 10, label: "Demi d'ouverture", top: 48, left: 50 },
+      { number: 9, label: "Demi de mêlée", top: 56, left: 50 },
+      { number: 8, label: "Troisième ligne centre", top: 64, left: 50 },
+      { number: 6, label: "Troisième ligne aile", top: 64, left: 32 },
+      { number: 7, label: "Troisième ligne aile", top: 64, left: 68 },
+      { number: 4, label: "Deuxième ligne", top: 74, left: 40 },
+      { number: 5, label: "Deuxième ligne", top: 74, left: 60 },
+      { number: 1, label: "Pilier gauche", top: 84, left: 30 },
+      { number: 2, label: "Talonneur", top: 84, left: 50 },
+      { number: 3, label: "Pilier droit", top: 84, left: 70 }
     ];
 
     const DEFAULT_PLAYERS = [
@@ -827,13 +850,13 @@
     };
 
     const renderLineup = () => {
-      const grid = document.getElementById("lineup-grid");
-      grid.innerHTML = "";
+      const field = document.getElementById("lineup-field");
+      field.innerHTML = "";
       POSITIONS.forEach((position) => {
         const card = document.createElement("div");
         card.className = "position-card";
-        card.style.gridColumnStart = position.col;
-        card.style.gridRowStart = position.row;
+        card.style.top = `${position.top}%`;
+        card.style.left = `${position.left}%`;
 
         const number = document.createElement("div");
         number.className = "position-number";
@@ -882,7 +905,7 @@
           slots.appendChild(slot);
         });
 
-        grid.appendChild(card);
+        field.appendChild(card);
       });
     };
 
