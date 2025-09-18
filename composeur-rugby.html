@@ -368,6 +368,8 @@
       --role-slot-sub-bg: rgba(7, 51, 28, 0.35);
       --placeholder-bg: rgba(255, 255, 255, 0.18);
       --role-slot-glow: rgba(31, 122, 74, 0.32);
+      --badge-bg: rgba(31, 122, 74, 0.18);
+      --badge-color: #1f5c3b;
     }
 
     .team-card[data-team-id="blue"] {
@@ -385,6 +387,8 @@
       --role-slot-sub-bg: rgba(9, 47, 98, 0.32);
       --placeholder-bg: rgba(255, 255, 255, 0.22);
       --role-slot-glow: rgba(31, 88, 165, 0.32);
+      --badge-bg: rgba(31, 88, 165, 0.18);
+      --badge-color: #1f58a5;
     }
 
     .team-card[data-team-id="neutral"] {
@@ -402,6 +406,8 @@
       --role-slot-sub-bg: rgba(34, 39, 49, 0.28);
       --placeholder-bg: rgba(255, 255, 255, 0.18);
       --role-slot-glow: rgba(95, 102, 115, 0.32);
+      --badge-bg: rgba(95, 102, 115, 0.2);
+      --badge-color: #4b5260;
     }
 
     .badge {
@@ -410,8 +416,8 @@
       justify-content: center;
       padding: 2px 10px;
       border-radius: 999px;
-      background: rgba(15, 52, 143, 0.12);
-      color: var(--accent);
+      background: var(--badge-bg, rgba(15, 52, 143, 0.12));
+      color: var(--badge-color, var(--accent));
       font-size: calc(0.75rem * var(--team-font-scale) / var(--page-font-scale));
       font-weight: 600;
     }
@@ -511,7 +517,7 @@
       align-items: center;
       justify-content: center;
       min-height: calc(26px * var(--team-font-scale));
-      transition: background 0.2s ease, box-shadow 0.2s ease;
+      transition: background 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
       cursor: grab;
       box-shadow: var(--role-slot-shadow, none);
     }
@@ -531,9 +537,10 @@
 
     .role-slot.substitute {
       background: var(--role-slot-sub-bg, rgba(0, 0, 0, 0.14));
+      --role-slot-shadow: var(--role-slot-sub-shadow, 0 6px 16px rgba(0, 0, 0, 0.18));
     }
 
-    .role-slot.drag-over {
+    .role-slot:is(:hover, .drag-over) {
       filter: brightness(1.12);
       box-shadow: var(--role-slot-shadow, none), 0 0 0 2px rgba(255, 255, 255, 0.65),
         0 0 0 6px var(--role-slot-glow, rgba(15, 52, 143, 0.28));
@@ -557,14 +564,13 @@
       border: none;
       background: none;
       pointer-events: none;
-      letter-spacing: 0.02em;
-      text-transform: uppercase;
+      letter-spacing: 0.01em;
       font-weight: 600;
       opacity: 0;
       transition: opacity 0.18s ease;
     }
 
-    .role-slot.drag-over .placeholder {
+    .role-slot:not(.filled):is(:hover, .drag-over) .placeholder {
       display: inline-flex;
       opacity: 1;
     }
