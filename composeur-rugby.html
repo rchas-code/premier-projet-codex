@@ -293,13 +293,23 @@
       z-index: 4;
     }
 
-    .player:hover .player-actions {
+    body:not(.player-drag-active) .player:hover .player-actions,
+    body:not(.player-drag-active) .role-slot:hover .player .player-actions {
       opacity: 1;
       pointer-events: auto;
     }
 
-    .player:hover .name::after {
+    body:not(.player-drag-active) .player:hover .name::after,
+    body:not(.player-drag-active) .role-slot:hover .player .name::after {
       opacity: 1;
+    }
+
+    body.player-drag-active .player-actions,
+    body.player-drag-active .player .name::after,
+    .player.is-dragging .player-actions,
+    .player.is-dragging .name::after {
+      opacity: 0 !important;
+      pointer-events: none !important;
     }
 
     .player button {
@@ -1189,11 +1199,15 @@
           const id = el.dataset.playerId;
           event.dataTransfer.setData("text/plain", id);
           event.dataTransfer.effectAllowed = "move";
+          document.body.classList.add("player-drag-active");
+          el.classList.add("is-dragging");
         });
         el.addEventListener("dragend", () => {
           document.querySelectorAll(".drag-over").forEach((target) => {
             target.classList.remove("drag-over");
           });
+          document.body.classList.remove("player-drag-active");
+          el.classList.remove("is-dragging");
         });
       });
 
@@ -1229,6 +1243,7 @@
           } else if (target === "position") {
             placeInPosition(playerId, zone.dataset.teamId, zone.dataset.positionId, zone.dataset.role);
           }
+          document.body.classList.remove("player-drag-active");
           render();
           saveState();
         });
