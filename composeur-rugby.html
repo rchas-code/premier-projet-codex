@@ -18,6 +18,8 @@
       --slot-gap: 18px;
       --page-font-scale: 1;
       --team-font-scale: 1;
+      --sidebar-sticky-top: 24px;
+      --sidebar-sticky-bottom: 24px;
     }
 
     * {
@@ -136,6 +138,27 @@
       column-gap: 10px;
       row-gap: 24px;
       align-items: start;
+      transition: grid-template-columns 0.3s ease;
+    }
+
+    .layout.sidebar-collapsed {
+      grid-template-columns: clamp(56px, 6vw, 80px) 1fr;
+    }
+
+    .sidebar-column {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-self: stretch;
+      min-height: 100%;
+      position: relative;
+      transition: width 0.3s ease;
+    }
+
+    .sidebar-content {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
     .sidebar {
@@ -147,13 +170,15 @@
       padding: 20px;
       box-shadow: 0 12px 30px rgba(15, 35, 95, 0.08);
       border: 1px solid rgba(12, 41, 92, 0.06);
-      align-self: stretch;
-      min-height: 100%;
       border-right: 1px solid var(--border);
+      width: 100%;
+    }
+
+    .sidebar--sticky {
       position: sticky;
-      top: 24px;
-      max-height: calc(100vh - 48px);
-      overflow-y: auto;
+      top: var(--sidebar-sticky-top, 24px);
+      max-height: calc(100vh - var(--sidebar-sticky-top, 24px) - var(--sidebar-sticky-bottom, 24px));
+      overflow: auto;
     }
 
     .sidebar h2 {
@@ -179,6 +204,65 @@
       margin: 0;
       color: var(--text-muted);
       font-size: 0.95rem;
+    }
+
+    .sidebar-toggle {
+      align-self: flex-end;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(12, 41, 92, 0.12);
+      background: var(--card);
+      color: var(--accent);
+      box-shadow: 0 8px 20px rgba(15, 35, 95, 0.08);
+      transition: color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .sidebar-toggle:hover,
+    .sidebar-toggle:focus-visible {
+      color: var(--accent-alt);
+      outline: none;
+      box-shadow: 0 8px 24px rgba(0, 168, 232, 0.24);
+    }
+
+    .sidebar-toggle svg {
+      width: 18px;
+      height: 18px;
+      display: block;
+    }
+
+    .sidebar-toggle-label {
+      font-weight: 600;
+    }
+
+    .sidebar-toggle .sidebar-toggle-chevron {
+      transition: transform 0.2s ease;
+    }
+
+    .sidebar-column[data-collapsed="true"] {
+      align-items: center;
+    }
+
+    .sidebar-column[data-collapsed="true"] .sidebar-toggle {
+      align-self: center;
+      flex-direction: column;
+      gap: 6px;
+      padding: 12px 10px;
+      border-radius: 18px;
+    }
+
+    .sidebar-column[data-collapsed="true"] .sidebar-toggle-label {
+      display: none;
+    }
+
+    .sidebar-column[data-collapsed="true"] .sidebar-toggle .sidebar-toggle-chevron {
+      transform: rotate(180deg);
+    }
+
+    .sidebar-column[data-collapsed="true"] .sidebar-content {
+      display: none;
     }
 
     textarea {
@@ -658,7 +742,15 @@
         grid-template-columns: 1fr;
       }
 
-      .sidebar {
+      .layout.sidebar-collapsed {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar-column {
+        width: 100%;
+      }
+
+      .sidebar--sticky {
         position: static;
         max-height: none;
         overflow: visible;
@@ -749,19 +841,52 @@
     </header>
 
     <div class="layout editor-only">
-      <section class="card sidebar">
-        <div>
-          <h2>Joueurs présents</h2>
-          <p class="subtitle">Commencez par entrer tous vos joueurs ici. Puis créez votre composition.</p>
+      <aside class="sidebar-column" data-collapsed="false">
+        <button
+          class="sidebar-toggle"
+          type="button"
+          aria-expanded="true"
+          aria-controls="sidebar-content"
+          aria-label="Replier la colonne des joueurs"
+        >
+          <span class="sidebar-toggle-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+              <circle cx="8" cy="8" r="3" fill="currentColor"></circle>
+              <circle cx="16" cy="8" r="3" fill="currentColor"></circle>
+              <path
+                fill="currentColor"
+                d="M4 19v-1c0-2.761 2.239-5 5-5s5 2.239 5 5v1zm10 0v-1c0-2.761 2.239-5 5-5s5 2.239 5 5v1z"
+              ></path>
+            </svg>
+          </span>
+          <span class="sidebar-toggle-label">Joueurs</span>
+          <span class="sidebar-toggle-chevron" aria-hidden="true">
+            <svg viewBox="0 0 20 20" focusable="false" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M12.707 5.293a1 1 0 0 1 0 1.414L9.414 10l3.293 3.293a1 1 0 1 1-1.414 1.414l-4-4a1 1 0 0 1 0-1.414l4-4a1 1 0 0 1 1.414 0Z"
+              ></path>
+            </svg>
+          </span>
+        </button>
+        <div class="sidebar-content" id="sidebar-content">
+          <section class="sidebar">
+            <div>
+              <h2>Joueurs présents</h2>
+              <p class="subtitle">Commencez par entrer tous vos joueurs ici. Puis créez votre composition.</p>
+            </div>
+            <textarea id="import-input" placeholder="Ex. Antoine Dupont; Romain Ntamack, Grégory Alldritt"></textarea>
+            <button id="import-btn">Ajouter les joueurs</button>
+          </section>
+          <section class="sidebar sidebar--sticky">
+            <div class="pool">
+              <h3>Effectif du jour</h3>
+              <div id="pool-list" class="pool-list" data-drop-target="pool" data-empty-label="Aucun joueur">
+              </div>
+            </div>
+          </section>
         </div>
-        <textarea id="import-input" placeholder="Ex. Antoine Dupont; Romain Ntamack, Grégory Alldritt"></textarea>
-        <button id="import-btn">Ajouter les joueurs</button>
-        <div class="pool">
-          <h3>Effectif du jour</h3>
-          <div id="pool-list" class="pool-list" data-drop-target="pool" data-empty-label="Aucun joueur">
-          </div>
-        </div>
-      </section>
+      </aside>
 
       <section class="teams">
         <div class="composition-card team-card" data-team-id="blue">
@@ -852,6 +977,7 @@
       pool: [],
       playersText: "",
       fontScale: 1,
+      sidebarCollapsed: false,
       teams: TEAM_PRESETS.map((team) => ({
         ...team,
         lineup: POSITION_PRESET.map((slot) => ({ ...slot, starter: null, substitute: null }))
@@ -879,6 +1005,37 @@
 
     const isValidPlayer = (player) => {
       return player && typeof player.id === "string" && typeof player.name === "string";
+    };
+
+    const pageEl = document.querySelector(".page");
+    const headerEl = document.querySelector("header");
+    const layoutEl = document.querySelector(".layout");
+    const sidebarColumn = document.querySelector(".sidebar-column");
+    const sidebarContent = document.getElementById("sidebar-content");
+    const sidebarToggle = document.querySelector(".sidebar-toggle");
+
+    const parseSize = (value) => {
+      const parsed = parseFloat(value);
+      return Number.isFinite(parsed) ? parsed : 0;
+    };
+
+    const updateStickyOffset = () => {
+      const pageStyles = pageEl ? window.getComputedStyle(pageEl) : null;
+      const paddingTop = pageStyles ? parseSize(pageStyles.paddingTop) : 0;
+      const paddingBottom = pageStyles ? parseSize(pageStyles.paddingBottom) : 0;
+      let gapValue = 0;
+      if (pageStyles) {
+        const rowGap = parseSize(pageStyles.rowGap);
+        const gap = parseSize(pageStyles.gap);
+        gapValue = rowGap || gap;
+      }
+      const headerHeight = headerEl ? headerEl.offsetHeight : 0;
+      const offset = headerHeight + paddingTop + gapValue;
+      document.documentElement.style.setProperty("--sidebar-sticky-top", `${offset}px`);
+      document.documentElement.style.setProperty(
+        "--sidebar-sticky-bottom",
+        `${paddingBottom + gapValue}px`
+      );
     };
 
     const saveState = () => {
@@ -914,6 +1071,7 @@
             return team;
           });
         }
+        base.sidebarCollapsed = !!raw.sidebarCollapsed;
         return base;
       } catch (error) {
         console.error("Impossible de charger l'état", error);
@@ -922,6 +1080,27 @@
     };
 
     let state = loadState() || defaultState();
+
+    const applySidebarState = () => {
+      const collapsed = !!state.sidebarCollapsed;
+      if (sidebarColumn) {
+        sidebarColumn.setAttribute("data-collapsed", collapsed ? "true" : "false");
+      }
+      if (sidebarContent) {
+        sidebarContent.hidden = collapsed;
+      }
+      if (layoutEl) {
+        layoutEl.classList.toggle("sidebar-collapsed", collapsed);
+      }
+      if (sidebarToggle) {
+        sidebarToggle.setAttribute("aria-expanded", String(!collapsed));
+        sidebarToggle.setAttribute(
+          "aria-label",
+          collapsed ? "Déplier la colonne des joueurs" : "Replier la colonne des joueurs"
+        );
+        sidebarToggle.title = collapsed ? "Déplier la colonne" : "Replier la colonne";
+      }
+    };
 
     const getAllPlayers = () => {
       const players = [...state.pool];
@@ -1250,6 +1429,7 @@
       if (valueEl) {
         valueEl.textContent = `${Math.round(scale * 100)}%`;
       }
+      updateStickyOffset();
     };
 
     const adjustFontScale = (delta) => {
@@ -1261,6 +1441,7 @@
     };
 
     const render = () => {
+      applySidebarState();
       const textarea = document.getElementById("import-input");
       if (document.activeElement !== textarea) {
         textarea.value = state.playersText;
@@ -1270,6 +1451,7 @@
       renderTeams();
       updateBadges();
       attachDnDHandlers();
+      updateStickyOffset();
     };
 
     document.addEventListener("input", (event) => {
@@ -1294,6 +1476,17 @@
       render();
       saveState();
     });
+
+    if (sidebarToggle) {
+      sidebarToggle.addEventListener("click", () => {
+        state.sidebarCollapsed = !state.sidebarCollapsed;
+        applySidebarState();
+        saveState();
+        if (!state.sidebarCollapsed) {
+          updateStickyOffset();
+        }
+      });
+    }
 
     document.getElementById("import-btn").addEventListener("click", () => {
       importPlayers();
@@ -1322,6 +1515,10 @@
       event.preventDefault();
     });
 
+    window.addEventListener("resize", updateStickyOffset);
+
+    applySidebarState();
+    updateStickyOffset();
     render();
   </script>
 </body>
