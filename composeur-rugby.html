@@ -539,10 +539,6 @@
         0 0 0 6px var(--role-slot-glow, rgba(15, 52, 143, 0.28));
     }
 
-    .role-slot.drag-over .placeholder {
-      opacity: 1;
-    }
-
     .role-player {
       width: 100%;
       display: flex;
@@ -551,7 +547,7 @@
     }
 
     .role-player .placeholder {
-      display: inline-flex;
+      display: none;
       align-items: center;
       justify-content: center;
       font-size: calc(0.82rem * var(--team-font-scale) / var(--page-font-scale));
@@ -564,8 +560,13 @@
       letter-spacing: 0.02em;
       text-transform: uppercase;
       font-weight: 600;
-      opacity: 0.8;
-      transition: opacity 0.2s ease;
+      opacity: 0;
+      transition: opacity 0.18s ease;
+    }
+
+    .role-slot.drag-over .placeholder {
+      display: inline-flex;
+      opacity: 1;
     }
 
     .position-slot .player {
