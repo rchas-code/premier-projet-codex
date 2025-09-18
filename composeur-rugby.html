@@ -18,6 +18,7 @@
       --slot-gap: 18px;
       --page-font-scale: 1;
       --team-font-scale: 1;
+      --sidebar-collapsed-width: 64px;
     }
 
     * {
@@ -136,9 +137,18 @@
       column-gap: 10px;
       row-gap: 24px;
       align-items: start;
+      transition: grid-template-columns 0.3s ease;
+    }
+
+    .layout--sidebar-collapsed {
+      grid-template-columns: var(--sidebar-collapsed-width) 1fr;
     }
 
     .sidebar {
+      --sidebar-sticky-start: 60px;
+      --sidebar-inputs-height: 260px;
+      --sidebar-block-gap: 16px;
+      --sidebar-pool-max-height: 320px;
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -149,15 +159,111 @@
       border: 1px solid rgba(12, 41, 92, 0.06);
       align-self: stretch;
       min-height: 100%;
+      min-width: 0;
       border-right: 1px solid var(--border);
       position: sticky;
       top: 24px;
       max-height: calc(100vh - 48px);
-      overflow-y: auto;
+      overflow: visible;
+      transition: padding 0.3s ease, border-radius 0.3s ease;
     }
 
     .sidebar h2 {
       margin-bottom: 4px;
+    }
+
+    .sidebar .subtitle {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .sidebar__toggle {
+      align-self: flex-end;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--accent);
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+      margin-bottom: 4px;
+    }
+
+    .sidebar__toggle:hover {
+      background: rgba(11, 61, 145, 0.08);
+      color: var(--accent-alt);
+    }
+
+    .sidebar__toggle:focus-visible {
+      outline: 2px solid var(--accent-alt);
+      outline-offset: 2px;
+    }
+
+    .sidebar__toggle-icon {
+      font-size: 1.1rem;
+      line-height: 1;
+      transition: transform 0.2s ease;
+    }
+
+    .sidebar__toggle[aria-expanded="false"] .sidebar__toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .sidebar__content {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: opacity 0.2s ease;
+      min-height: 0;
+    }
+
+    .sidebar__block {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: var(--card);
+      border-radius: 12px;
+      padding: 4px 0 8px;
+    }
+
+    .sidebar__block--inputs {
+      position: sticky;
+      top: var(--sidebar-sticky-start);
+      z-index: 2;
+      padding: 4px 0 12px;
+      box-shadow: 0 8px 16px rgba(15, 35, 95, 0.04);
+    }
+
+    .sidebar__block--pool {
+      position: sticky;
+      top: calc(var(--sidebar-sticky-start) + var(--sidebar-inputs-height) + var(--sidebar-block-gap));
+      z-index: 1;
+      padding: 8px 0 12px;
+      box-shadow: 0 8px 16px rgba(15, 35, 95, 0.04);
+      margin-top: var(--sidebar-block-gap);
+    }
+
+    .sidebar__pool-scroll {
+      overflow: auto;
+      max-height: var(--sidebar-pool-max-height);
+      padding-right: 4px;
+      scrollbar-gutter: stable;
+      min-height: 0;
+    }
+
+    .sidebar__mini-label {
+      display: none;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      align-self: center;
     }
 
     .sidebar #import-btn {
@@ -175,10 +281,30 @@
       box-shadow: 0 6px 18px rgba(15, 52, 143, 0.2);
     }
 
-    .sidebar .subtitle {
-      margin: 0;
-      color: var(--text-muted);
-      font-size: 0.95rem;
+    .sidebar--collapsed {
+      padding: 16px 12px;
+      border-radius: 16px;
+      align-items: center;
+      gap: 12px;
+      overflow: hidden;
+    }
+
+    .sidebar--collapsed .sidebar__content {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      max-height: 0;
+      overflow: hidden;
+      padding: 0;
+    }
+
+    .sidebar--collapsed .sidebar__mini-label {
+      display: block;
+    }
+
+    .sidebar--collapsed .sidebar__toggle {
+      align-self: center;
+      margin-bottom: 0;
     }
 
     textarea {
@@ -196,6 +322,18 @@
       flex-direction: column;
       gap: 12px;
       flex: 1;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
 
     .pool-list,
@@ -749,16 +887,33 @@
     </header>
 
     <div class="layout editor-only">
-      <section class="card sidebar">
-        <div>
-          <h2>Joueurs présents</h2>
-          <p class="subtitle">Commencez par entrer tous vos joueurs ici. Puis créez votre composition.</p>
-        </div>
-        <textarea id="import-input" placeholder="Ex. Antoine Dupont; Romain Ntamack, Grégory Alldritt"></textarea>
-        <button id="import-btn">Ajouter les joueurs</button>
-        <div class="pool">
-          <h3>Effectif du jour</h3>
-          <div id="pool-list" class="pool-list" data-drop-target="pool" data-empty-label="Aucun joueur">
+      <section class="card sidebar" data-collapsible>
+        <button
+          type="button"
+          class="sidebar__toggle"
+          aria-expanded="true"
+          aria-controls="sidebar-content"
+          aria-label="Plier la colonne des joueurs"
+        >
+          <span class="sidebar__toggle-icon" aria-hidden="true">‹</span>
+          <span class="sr-only">Plier la colonne des joueurs</span>
+        </button>
+        <div class="sidebar__mini-label" aria-hidden="true">Joueurs</div>
+        <div class="sidebar__content" id="sidebar-content" aria-hidden="false">
+          <div class="sidebar__block sidebar__block--inputs" data-sidebar-block="inputs">
+            <div>
+              <h2>Joueurs présents</h2>
+              <p class="subtitle">Commencez par entrer tous vos joueurs ici. Puis créez votre composition.</p>
+            </div>
+            <textarea id="import-input" placeholder="Ex. Antoine Dupont; Romain Ntamack, Grégory Alldritt"></textarea>
+            <button id="import-btn">Ajouter les joueurs</button>
+          </div>
+          <div class="sidebar__block sidebar__block--pool pool" data-sidebar-block="pool">
+            <h3>Effectif du jour</h3>
+            <div class="sidebar__pool-scroll">
+              <div id="pool-list" class="pool-list" data-drop-target="pool" data-empty-label="Aucun joueur">
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -834,6 +989,88 @@
       { id: "pos-14", number: "14", label: "Ailier droit", row: 5, colStart: 7, colSpan: 2 },
       { id: "pos-15", number: "15", label: "Arrière", row: 6, colStart: 4, colSpan: 2 }
     ];
+
+    const layoutEl = document.querySelector(".layout");
+    const sidebarEl = document.querySelector(".sidebar");
+    const sidebarContent = sidebarEl ? sidebarEl.querySelector(".sidebar__content") : null;
+    const sidebarToggle = sidebarEl ? sidebarEl.querySelector(".sidebar__toggle") : null;
+    const sidebarInputsBlock = sidebarEl
+      ? sidebarEl.querySelector('[data-sidebar-block="inputs"]')
+      : null;
+    const sidebarPoolScroll = sidebarEl
+      ? sidebarEl.querySelector(".sidebar__pool-scroll")
+      : null;
+
+    const updateSidebarMetrics = () => {
+      if (!sidebarEl || !sidebarInputsBlock || !sidebarPoolScroll) return;
+      if (sidebarEl.classList.contains("sidebar--collapsed")) {
+        sidebarEl.style.removeProperty("--sidebar-pool-max-height");
+        return;
+      }
+
+      const styles = getComputedStyle(sidebarEl);
+      const paddingTop = parseFloat(styles.paddingTop) || 0;
+      const paddingBottom = parseFloat(styles.paddingBottom) || 0;
+      const gap = parseFloat(styles.rowGap || styles.gap) || 0;
+      let stickyTop = parseFloat(styles.top);
+      if (!Number.isFinite(stickyTop) || stickyTop === 0) {
+        stickyTop = 24;
+      }
+
+      const toggleStyles = sidebarToggle ? getComputedStyle(sidebarToggle) : null;
+      const toggleHeight = sidebarToggle ? sidebarToggle.getBoundingClientRect().height : 0;
+      const toggleMargin = toggleStyles ? parseFloat(toggleStyles.marginBottom) || 0 : 0;
+      const stickyStart = paddingTop + toggleHeight + toggleMargin;
+
+      const inputsHeight = sidebarInputsBlock.getBoundingClientRect().height;
+
+      sidebarEl.style.setProperty("--sidebar-sticky-start", `${stickyStart}px`);
+      sidebarEl.style.setProperty("--sidebar-inputs-height", `${inputsHeight}px`);
+      sidebarEl.style.setProperty("--sidebar-block-gap", `${gap}px`);
+
+      const available =
+        window.innerHeight - stickyTop - paddingBottom - stickyStart - inputsHeight - gap;
+      const maxHeight = Math.max(160, available);
+      sidebarEl.style.setProperty("--sidebar-pool-max-height", `${maxHeight}px`);
+    };
+
+    const scheduleSidebarMetrics = () => {
+      if (!sidebarEl || sidebarEl.classList.contains("sidebar--collapsed")) return;
+      requestAnimationFrame(updateSidebarMetrics);
+    };
+
+    if (sidebarToggle && sidebarEl && layoutEl) {
+      sidebarToggle.addEventListener("click", () => {
+        const isCollapsed = sidebarEl.classList.toggle("sidebar--collapsed");
+        layoutEl.classList.toggle("layout--sidebar-collapsed", isCollapsed);
+        sidebarToggle.setAttribute("aria-expanded", isCollapsed ? "false" : "true");
+        const nextLabel = isCollapsed
+          ? "Déplier la colonne des joueurs"
+          : "Plier la colonne des joueurs";
+        sidebarToggle.setAttribute("aria-label", nextLabel);
+        const srText = sidebarToggle.querySelector(".sr-only");
+        if (srText) {
+          srText.textContent = nextLabel;
+        }
+        if (sidebarContent) {
+          sidebarContent.setAttribute("aria-hidden", isCollapsed ? "true" : "false");
+        }
+        if (!isCollapsed) {
+          requestAnimationFrame(() => {
+            updateSidebarMetrics();
+          });
+        }
+      });
+    }
+
+    if (sidebarInputsBlock && "ResizeObserver" in window) {
+      const resizeObserver = new ResizeObserver(() => {
+        scheduleSidebarMetrics();
+      });
+      resizeObserver.observe(sidebarInputsBlock);
+    }
+
+    window.addEventListener("resize", scheduleSidebarMetrics);
 
     const mapLineup = (source) => {
       return POSITION_PRESET.map((slot) => {
@@ -1270,11 +1507,13 @@
       renderTeams();
       updateBadges();
       attachDnDHandlers();
+      scheduleSidebarMetrics();
     };
 
     document.addEventListener("input", (event) => {
       if (event.target.id === "import-input") {
         state.playersText = event.target.value;
+        scheduleSidebarMetrics();
       }
     });
 
@@ -1323,6 +1562,7 @@
     });
 
     render();
+    scheduleSidebarMetrics();
   </script>
 </body>
 </html>
