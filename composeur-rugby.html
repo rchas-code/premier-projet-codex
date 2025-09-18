@@ -142,21 +142,28 @@
       display: flex;
       flex-direction: column;
       gap: 16px;
+      align-self: stretch;
+      min-height: 100%;
+      position: sticky;
+      top: 24px;
+      max-height: calc(100vh - 48px);
+      overflow-y: auto;
+      padding: 4px 0;
+    }
+
+    .sidebar-section {
       background: var(--card);
       border-radius: 20px;
       padding: 20px;
       box-shadow: 0 12px 30px rgba(15, 35, 95, 0.08);
       border: 1px solid rgba(12, 41, 92, 0.06);
-      align-self: stretch;
-      min-height: 100%;
-      border-right: 1px solid var(--border);
-      position: sticky;
-      top: 24px;
-      max-height: calc(100vh - 48px);
-      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
 
-    .sidebar h2 {
+    .sidebar-section h2,
+    .sidebar-section h3 {
       margin-bottom: 4px;
     }
 
@@ -749,19 +756,23 @@
     </header>
 
     <div class="layout editor-only">
-      <section class="card sidebar">
-        <div>
-          <h2>Joueurs présents</h2>
-          <p class="subtitle">Commencez par entrer tous vos joueurs ici. Puis créez votre composition.</p>
-        </div>
-        <textarea id="import-input" placeholder="Ex. Antoine Dupont; Romain Ntamack, Grégory Alldritt"></textarea>
-        <button id="import-btn">Ajouter les joueurs</button>
-        <div class="pool">
-          <h3>Effectif du jour</h3>
-          <div id="pool-list" class="pool-list" data-drop-target="pool" data-empty-label="Aucun joueur">
+      <aside class="sidebar">
+        <section class="sidebar-section">
+          <div>
+            <h2>Joueurs présents</h2>
+            <p class="subtitle">Commencez par entrer tous vos joueurs ici. Puis créez votre composition.</p>
           </div>
-        </div>
-      </section>
+          <textarea id="import-input" placeholder="Ex. Antoine Dupont; Romain Ntamack, Grégory Alldritt"></textarea>
+          <button id="import-btn">Ajouter les joueurs</button>
+        </section>
+        <section class="sidebar-section">
+          <h3>Effectif du jour</h3>
+          <div class="pool">
+            <div id="pool-list" class="pool-list" data-drop-target="pool" data-empty-label="Aucun joueur">
+            </div>
+          </div>
+        </section>
+      </aside>
 
       <section class="teams">
         <div class="composition-card team-card" data-team-id="blue">
