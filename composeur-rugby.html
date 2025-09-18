@@ -367,6 +367,7 @@
       --role-slot-starter-shadow: 0 6px 16px rgba(0, 0, 0, 0.16);
       --role-slot-sub-bg: rgba(7, 51, 28, 0.35);
       --placeholder-bg: rgba(255, 255, 255, 0.18);
+      --role-slot-glow: rgba(31, 122, 74, 0.32);
     }
 
     .team-card[data-team-id="blue"] {
@@ -383,6 +384,7 @@
       --role-slot-starter-bg: rgba(255, 255, 255, 0.24);
       --role-slot-sub-bg: rgba(9, 47, 98, 0.32);
       --placeholder-bg: rgba(255, 255, 255, 0.22);
+      --role-slot-glow: rgba(31, 88, 165, 0.32);
     }
 
     .team-card[data-team-id="neutral"] {
@@ -399,6 +401,7 @@
       --role-slot-starter-bg: rgba(255, 255, 255, 0.2);
       --role-slot-sub-bg: rgba(34, 39, 49, 0.28);
       --placeholder-bg: rgba(255, 255, 255, 0.18);
+      --role-slot-glow: rgba(95, 102, 115, 0.32);
     }
 
     .badge {
@@ -510,6 +513,7 @@
       min-height: calc(26px * var(--team-font-scale));
       transition: background 0.2s ease, box-shadow 0.2s ease;
       cursor: grab;
+      box-shadow: var(--role-slot-shadow, none);
     }
 
     .role-slot::before {
@@ -522,11 +526,21 @@
 
     .role-slot.starter {
       background: var(--role-slot-starter-bg, rgba(255, 255, 255, 0.22));
-      box-shadow: var(--role-slot-starter-shadow, 0 6px 16px rgba(0, 0, 0, 0.16));
+      --role-slot-shadow: var(--role-slot-starter-shadow, 0 6px 16px rgba(0, 0, 0, 0.16));
     }
 
     .role-slot.substitute {
       background: var(--role-slot-sub-bg, rgba(0, 0, 0, 0.14));
+    }
+
+    .role-slot.drag-over {
+      filter: brightness(1.12);
+      box-shadow: var(--role-slot-shadow, none), 0 0 0 2px rgba(255, 255, 255, 0.65),
+        0 0 0 6px var(--role-slot-glow, rgba(15, 52, 143, 0.28));
+    }
+
+    .role-slot.drag-over .placeholder {
+      opacity: 1;
     }
 
     .role-player {
@@ -541,12 +555,17 @@
       align-items: center;
       justify-content: center;
       font-size: calc(0.82rem * var(--team-font-scale) / var(--page-font-scale));
-      color: var(--slot-text, #f5fffb);
+      color: rgba(255, 255, 255, 0.78);
       padding: calc(2px * var(--team-font-scale)) calc(4px * var(--team-font-scale));
       border-radius: 10px;
       border: none;
-      background: var(--placeholder-bg, rgba(255, 255, 255, 0.18));
+      background: none;
       pointer-events: none;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      font-weight: 600;
+      opacity: 0.8;
+      transition: opacity 0.2s ease;
     }
 
     .position-slot .player {
@@ -741,7 +760,8 @@
             <h2>Équipe Bleue</h2>
             <div class="badge-group">
               <span class="badge" data-team-starters="blue">Tit. 0 / 15</span>
-              <span class="badge" data-team-substitutes="blue">Remp. 0 / 15</span>
+              <span class="badge" data-team-substitutes="blue">Remp. 0</span>
+              <span class="badge" data-team-total="blue">Total 0</span>
             </div>
           </div>
           <div class="composition-field" data-team-field="blue"></div>
@@ -752,7 +772,8 @@
             <h2>Équipe Verte</h2>
             <div class="badge-group">
               <span class="badge" data-team-starters="green">Tit. 0 / 15</span>
-              <span class="badge" data-team-substitutes="green">Remp. 0 / 15</span>
+              <span class="badge" data-team-substitutes="green">Remp. 0</span>
+              <span class="badge" data-team-total="green">Total 0</span>
             </div>
           </div>
           <div class="composition-field" data-team-field="green"></div>
@@ -763,7 +784,8 @@
             <h2>Équipe sans maillot</h2>
             <div class="badge-group">
               <span class="badge" data-team-starters="neutral">Tit. 0 / 15</span>
-              <span class="badge" data-team-substitutes="neutral">Remp. 0 / 15</span>
+              <span class="badge" data-team-substitutes="neutral">Remp. 0</span>
+              <span class="badge" data-team-total="neutral">Total 0</span>
             </div>
           </div>
           <div class="composition-field" data-team-field="neutral"></div>
@@ -1099,7 +1121,7 @@
         if (slot.starter) {
           starterContainer.appendChild(buildPlayerElement(slot.starter, "position", "starter"));
         } else {
-          starterContainer.innerHTML = '<span class="placeholder"></span>';
+          starterContainer.innerHTML = '<span class="placeholder">Titulaire</span>';
         }
 
         const substituteSlot = document.createElement("div");
@@ -1116,7 +1138,7 @@
         if (slot.substitute) {
           substituteContainer.appendChild(buildPlayerElement(slot.substitute, "position", "substitute"));
         } else {
-          substituteContainer.innerHTML = '<span class="placeholder"></span>';
+          substituteContainer.innerHTML = '<span class="placeholder">Remplaçant</span>';
         }
 
         container.appendChild(starterSlot);
@@ -1141,11 +1163,15 @@
         const substitutesCount = team.lineup.filter((slot) => !!slot.substitute).length;
         const startersBadge = document.querySelector(`[data-team-starters="${team.id}"]`);
         const substitutesBadge = document.querySelector(`[data-team-substitutes="${team.id}"]`);
+        const totalBadge = document.querySelector(`[data-team-total="${team.id}"]`);
         if (startersBadge) {
           startersBadge.textContent = `Tit. ${startersCount} / 15`;
         }
         if (substitutesBadge) {
-          substitutesBadge.textContent = `Remp. ${substitutesCount} / 15`;
+          substitutesBadge.textContent = `Remp. ${substitutesCount}`;
+        }
+        if (totalBadge) {
+          totalBadge.textContent = `Total ${startersCount + substitutesCount}`;
         }
       });
     };
@@ -1157,6 +1183,11 @@
           event.dataTransfer.setData("text/plain", id);
           event.dataTransfer.effectAllowed = "move";
         });
+        el.addEventListener("dragend", () => {
+          document.querySelectorAll(".drag-over").forEach((target) => {
+            target.classList.remove("drag-over");
+          });
+        });
       });
 
       document.querySelectorAll("[data-drop-target]").forEach((zone) => {
@@ -1164,11 +1195,28 @@
           event.preventDefault();
           event.dataTransfer.dropEffect = "move";
         });
+        zone.addEventListener("dragenter", (event) => {
+          event.preventDefault();
+          if (zone.dataset.dropTarget === "position") {
+            zone.classList.add("drag-over");
+          }
+        });
+        zone.addEventListener("dragleave", (event) => {
+          if (zone.dataset.dropTarget === "position") {
+            const related = event.relatedTarget;
+            if (!related || !zone.contains(related)) {
+              zone.classList.remove("drag-over");
+            }
+          }
+        });
         zone.addEventListener("drop", (event) => {
           event.preventDefault();
           const playerId = event.dataTransfer.getData("text/plain");
           const target = zone.dataset.dropTarget;
           if (!playerId || !target) return;
+          if (target === "position") {
+            zone.classList.remove("drag-over");
+          }
           if (target === "pool") {
             moveToPool(playerId);
           } else if (target === "position") {
